@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BPH">
+<link rel="manifest" href="manifest.json">
+<title>BPH — Biswajit Power Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a1a;
+  --ink-soft:#2e2e2e;
+  --white:#ffffff;
+  --surface:#f7f7f6;
+  --surface-2:#efefed;
+  --border:#dddbd8;
+  --border-soft:#e8e6e3;
+  --muted:#9a9590;
+  --muted-2:#b5b1ab;
+  --accent:#3d3d3d;
+  --red:#9b3535;
+  --red-soft:#f5eded;
+  --green:#2e6b45;
+  --green-soft:#edf5f0;
+  --amber:#7a5c1e;
+  --amber-soft:#faf3e0;
+  --font-display:'Playfair Display',serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --nav-h:62px;--top-h:54px;
+  --radius:3px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--surface);color:var(--ink);font-family:var(--font-body);font-size:14px;-webkit-font-smoothing:antialiased;}
+
+/* TOPBAR */
+#topbar{position:fixed;top:0;left:0;right:0;height:calc(var(--top-h) + env(safe-area-inset-top));background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top) 18px 0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:30px;height:30px;background:var(--ink);border-radius:2px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:17px;height:17px;}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text span:first-child{font-family:var(--font-display);font-size:15px;color:var(--ink);letter-spacing:0.5px;font-weight:600;}
+.logo-text span:last-child{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:400;}
+#topbar-date{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.5px;}
+#settings-btn{background:none;border:none;cursor:pointer;padding:6px;border-radius:var(--radius);}
+#settings-btn svg{width:18px;height:18px;stroke:var(--muted);}
+#settings-btn:hover svg{stroke:var(--ink);}
+
+/* MAIN CONTENT */
+#app{position:fixed;top:calc(var(--top-h) + env(safe-area-inset-top));left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* BOTTOM NAV */
+#bottomnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom));background:var(--white);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:9px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted-2);transition:color .15s;}
+.nav-btn.active{color:var(--ink);}
+.nav-btn svg{width:19px;height:19px;stroke-width:1.5;}
+
+/* PAGES */
+.page{display:none;padding:18px 16px 24px;min-height:100%;}
+.page.active{display:block;}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.sec-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:0.3px;}
+.btn-add{background:var(--ink);color:var(--white);border:none;font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:0.5px;padding:8px 14px;cursor:pointer;border-radius:var(--radius);}
+.btn-sm{background:var(--ink);color:var(--white);border:none;font-family:var(--font-body);font-size:10px;font-weight:500;padding:5px 11px;cursor:pointer;border-radius:var(--radius);}
+.btn-out{background:var(--white);color:var(--ink);border:1px solid var(--border);font-family:var(--font-body);font-size:10px;font-weight:500;padding:5px 11px;cursor:pointer;border-radius:var(--radius);}
+.btn-out:hover{border-color:var(--ink);}
+.btn-danger{background:var(--red-soft);color:var(--red);border:1px solid #dcc;font-family:var(--font-body);font-size:10px;font-weight:500;padding:5px 11px;cursor:pointer;border-radius:var(--radius);}
+
+/* DASHBOARD GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.dash-card{background:var(--white);border:1px solid var(--border-soft);padding:14px 12px;border-radius:var(--radius);}
+.dash-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.dash-val{font-family:var(--font-mono);font-size:13px;font-weight:500;margin-top:5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dash-card.full{grid-column:1/-1;}
+.dash-card.highlight{background:var(--ink);border-color:var(--ink);}
+.dash-card.highlight .dash-label{color:var(--muted-2);}
+.dash-card.highlight .dash-val{color:var(--white);}
+.profit-indicator{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;letter-spacing:0.5px;padding:3px 8px;margin-top:7px;border-radius:2px;}
+.pi-green{background:var(--green-soft);color:var(--green);}
+.pi-red{background:var(--red-soft);color:var(--red);}
+.pi-yellow{background:var(--amber-soft);color:var(--amber);}
+
+/* INVENTORY */
+.cat-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--surface-2);padding:4px;border-radius:4px;}
+.cat-tab{flex:1;padding:7px 4px;text-align:center;font-size:10px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--muted);border-radius:2px;transition:.15s;}
+.cat-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.inv-item{background:var(--white);border:1px solid var(--border-soft);padding:14px;margin-bottom:8px;border-radius:var(--radius);border-left:3px solid var(--border);}
+.inv-item-row1{display:flex;justify-content:space-between;align-items:flex-start;}
+.inv-name{font-weight:600;font-size:13px;color:var(--ink);}
+.inv-cat-tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--surface);padding:2px 7px;border-radius:2px;}
+.inv-item-row2{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);}
+.inv-stat{text-align:center;}
+.inv-stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.inv-stat-val{font-family:var(--font-mono);font-size:13px;font-weight:500;margin-top:3px;color:var(--ink);}
+.inv-actions{display:flex;gap:6px;margin-top:10px;}
+.inv-low{border-left-color:var(--red);}
+.inv-low .inv-name::after{content:" · LOW STOCK";font-size:9px;color:var(--red);font-weight:500;letter-spacing:0.5px;}
+.inv-total-bar{background:var(--ink);color:var(--white);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-radius:var(--radius);}
+.inv-total-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);}
+.inv-total-val{font-family:var(--font-mono);font-size:17px;font-weight:500;}
+
+/* EXPENSE ITEMS */
+.exp-item{background:var(--white);border:1px solid var(--border-soft);padding:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius);}
+.exp-item-left{flex:1;}
+.exp-item-name{font-weight:600;font-size:13px;}
+.exp-item-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.exp-item-right{text-align:right;}
+.exp-amount{font-family:var(--font-mono);font-size:14px;font-weight:500;}
+.exp-actions{display:flex;gap:6px;margin-top:6px;justify-content:flex-end;}
+.toggle-active{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);}
+.toggle-switch{position:relative;width:32px;height:17px;cursor:pointer;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border);transition:.2s;border-radius:17px;}
+.toggle-slider:before{content:"";position:absolute;height:13px;width:13px;left:2px;bottom:2px;background:white;transition:.2s;border-radius:50%;}
+input:checked+.toggle-slider{background:var(--green);}
+input:checked+.toggle-slider:before{transform:translateX(15px);}
+.exp-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);margin-bottom:10px;}
+.exp-total-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);}
+.exp-total-val{font-family:var(--font-mono);font-size:16px;font-weight:500;}
+.biz-exp-item{background:var(--white);border:1px solid var(--border-soft);padding:14px;margin-bottom:8px;border-radius:var(--radius);}
+.biz-exp-row1{display:flex;justify-content:space-between;align-items:flex-start;}
+.biz-exp-cat{font-size:9px;letter-spacing:1px;text-transform:uppercase;background:var(--surface-2);color:var(--accent);padding:3px 8px;border-radius:2px;font-weight:500;}
+.biz-exp-date{font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.biz-exp-note{font-size:12px;color:var(--ink-soft);margin-top:5px;}
+.biz-exp-row2{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);}
+.biz-exp-amount{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--red);}
+
+/* ACCOUNTS */
+.acc-tab-bar{display:flex;gap:4px;margin-bottom:16px;background:var(--surface-2);padding:4px;border-radius:4px;}
+.acc-tab{flex:1;padding:7px 4px;text-align:center;font-size:9px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--muted);border-radius:2px;transition:.15s;}
+.acc-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.acc-balance-box{background:var(--ink);color:var(--white);padding:18px 16px;margin-bottom:14px;border-radius:var(--radius);}
+.acc-balance-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted-2);}
+.acc-balance-val{font-family:var(--font-mono);font-size:26px;font-weight:500;margin-top:5px;}
+.ledger-header{display:grid;grid-template-columns:75px 1fr 85px 85px 85px;gap:6px;padding:8px 10px;background:var(--surface-2);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-radius:2px 2px 0 0;border:1px solid var(--border-soft);}
+.ledger-row{display:grid;grid-template-columns:75px 1fr 85px 85px 85px;gap:6px;padding:9px 10px;border-bottom:1px solid var(--border-soft);font-size:11px;background:var(--white);}
+.ledger-row:hover{background:var(--surface);}
+.ledger-in{color:var(--green);font-family:var(--font-mono);}
+.ledger-out{color:var(--red);font-family:var(--font-mono);}
+.ledger-bal{font-family:var(--font-mono);font-weight:500;color:var(--ink);}
+.ledger-date{font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.ledger-wrapper{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border-soft);}
+.ledger-wrapper .ledger-header{border:none;border-bottom:1px solid var(--border-soft);}
+.ledger-wrapper .ledger-row{border-left:none;border-right:none;}
+.recv-item{background:var(--white);border:1px solid var(--border-soft);padding:14px;margin-bottom:8px;border-radius:var(--radius);}
+.recv-item.overdue{border-left:3px solid var(--red);}
+.recv-item-row1{display:flex;justify-content:space-between;}
+.recv-name{font-weight:600;color:var(--ink);}
+.recv-amount{font-family:var(--font-mono);font-size:14px;font-weight:500;}
+.recv-meta{font-size:10px;color:var(--muted);margin-top:4px;}
+.recv-overdue-tag{font-size:9px;background:var(--red-soft);color:var(--red);padding:2px 6px;letter-spacing:0.5px;border-radius:2px;}
+.recv-actions{display:flex;gap:6px;margin-top:10px;}
+
+/* REPORTS */
+.report-filter{padding:14px;background:var(--white);border:1px solid var(--border-soft);margin-bottom:14px;border-radius:var(--radius);}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.filter-btn{padding:6px 12px;font-size:10px;font-weight:500;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:2px;}
+.filter-btn.active{background:var(--ink);color:var(--white);border-color:var(--ink);}
+.date-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.date-row label{font-size:10px;font-weight:500;color:var(--muted);}
+.date-row input[type=date]{border:1px solid var(--border);padding:6px 8px;font-family:var(--font-body);font-size:12px;background:var(--white);border-radius:var(--radius);color:var(--ink);}
+.report-types{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.rep-type-btn{padding:7px 12px;font-size:10px;font-weight:500;cursor:pointer;background:var(--white);border:1px solid var(--border-soft);color:var(--muted);border-radius:2px;}
+.rep-type-btn.active{background:var(--ink);color:var(--white);border-color:var(--ink);}
+.report-area{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.report-header-bar{background:var(--ink);color:var(--white);padding:18px 20px;text-align:center;}
+.report-co-name{font-family:var(--font-display);font-size:19px;letter-spacing:1px;font-weight:600;}
+.report-co-sub{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);margin-top:4px;}
+.report-doc-title{font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-top:10px;font-weight:500;color:var(--muted-2);}
+.report-period{font-size:10px;color:var(--muted-2);margin-top:3px;font-family:var(--font-mono);}
+.report-body{padding:18px;background:var(--white);}
+.rep-section-title{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:8px;margin-top:16px;color:var(--muted);}
+.rep-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-soft);}
+.rep-row-label{font-size:12px;color:var(--ink-soft);}
+.rep-row-val{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--ink);}
+.rep-row.indent .rep-row-label{padding-left:16px;color:var(--muted);font-size:11px;}
+.rep-total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border);margin-top:4px;}
+.rep-total-label{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink);}
+.rep-total-val{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--ink);}
+.rep-grand-total{background:var(--ink);color:var(--white);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;border-radius:2px;}
+.rep-grand-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);}
+.rep-grand-val{font-family:var(--font-mono);font-size:16px;font-weight:500;}
+.rep-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end;}
+.inv-table{width:100%;border-collapse:collapse;font-size:11px;}
+.inv-table th{background:var(--surface-2);color:var(--muted);padding:8px 10px;text-align:left;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;border-bottom:1px solid var(--border);}
+.inv-table td{padding:8px 10px;border-bottom:1px solid var(--border-soft);color:var(--ink-soft);}
+.inv-table tr:hover td{background:var(--surface);}
+.inv-table .cat-row td{background:var(--surface);font-weight:700;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.mono{font-family:var(--font-mono);}
+
+/* SETTINGS */
+.settings-section{margin-bottom:22px;}
+.settings-title{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--muted);}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border-soft);}
+.settings-label{font-size:12px;font-weight:500;color:var(--ink);}
+.settings-val{font-family:var(--font-mono);font-size:11px;color:var(--muted);}
+.cap-investment-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-soft);font-size:12px;}
+
+/* FORMS */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;color:var(--muted);}
+.form-input{width:100%;border:1px solid var(--border);padding:10px 12px;font-family:var(--font-body);font-size:13px;background:var(--white);outline:none;border-radius:var(--radius);color:var(--ink);transition:border-color .15s;}
+.form-input:focus{border-color:var(--accent);}
+.form-select{width:100%;border:1px solid var(--border);padding:10px 12px;font-family:var(--font-body);font-size:13px;background:var(--white);outline:none;border-radius:var(--radius);color:var(--ink);appearance:none;}
+.form-select:focus{border-color:var(--accent);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-note{font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,20,0.5);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(2px);}
+.modal-overlay.active{display:flex;}
+.modal-box{background:var(--white);width:100%;max-height:92vh;overflow-y:auto;border-top:1px solid var(--border);border-radius:8px 8px 0 0;padding:22px 18px;}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border-soft);color:var(--ink);}
+.btn-primary{background:var(--ink);color:var(--white);border:none;font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:0.5px;padding:12px 20px;cursor:pointer;border-radius:var(--radius);width:100%;}
+.btn-secondary{background:var(--white);color:var(--ink);border:1px solid var(--border);font-family:var(--font-body);font-size:12px;font-weight:500;padding:11px 20px;cursor:pointer;border-radius:var(--radius);}
+.confirm-box{padding:14px;border:1px solid var(--border-soft);background:var(--surface);margin-bottom:16px;font-size:13px;line-height:1.6;border-radius:var(--radius);}
+.confirm-box strong{display:block;font-size:13px;margin-bottom:10px;color:var(--ink);font-weight:600;}
+.confirm-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-soft);}
+.confirm-label{font-size:11px;color:var(--muted);}
+.confirm-val{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--ink);}
+.confirm-val.green{color:var(--green);}
+.confirm-val.red{color:var(--red);}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:44px 20px;color:var(--muted);}
+.empty-state-icon{font-size:32px;margin-bottom:10px;opacity:0.6;}
+.empty-state-text{font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+
+/* TOAST */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--white);padding:9px 18px;font-size:11px;font-weight:500;letter-spacing:0.5px;z-index:300;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;border-radius:20px;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:360px){
+  .form-row{grid-template-columns:1fr;}
+  .dash-val{font-size:12px;}
+  .inv-total-val{font-size:15px;}
+  .acc-balance-val{font-size:20px;}
+  .ledger-header,.ledger-row{grid-template-columns:65px 1fr 70px 70px 72px;font-size:10px;gap:4px;}
+  .modal-box{padding:16px 14px;}
+  .sec-title{font-size:17px;}
+}
+@media(min-width:600px){
+  .dash-grid{grid-template-columns:1fr 1fr 1fr;}
+  .dash-card.full{grid-column:1/-1;}
+  body{background:var(--surface-2);}
+  #app{max-width:720px;margin:0 auto;left:50%;right:auto;transform:translateX(-50%);background:var(--surface);}
+  #topbar{max-width:720px;left:50%;right:auto;transform:translateX(-50%);border-left:1px solid var(--border);border-right:1px solid var(--border);}
+  #bottomnav{max-width:720px;left:50%;right:auto;transform:translateX(-50%);border-left:1px solid var(--border);border-right:1px solid var(--border);}
+}
+
+/* PRINT STYLES */
+@page{
+  size:A4 portrait;
+  margin:12mm 14mm 14mm 14mm;
+}
+@media print{
+  /* Force color printing */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+
+  /* Reset all fixed/absolute positioning */
+  html,body{
+    overflow:visible!important;
+    height:auto!important;
+    width:100%!important;
+    background:#fff!important;
+    font-size:11px!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  /* Kill the app shell completely */
+  #topbar,#bottomnav,#toast,
+  .rep-actions,.modal-overlay,
+  .cat-tabs,.acc-tab-bar,
+  .filter-btn,.rep-type-btn,
+  .report-filter,.report-types,
+  .nav-btn,.btn-add,.btn-sm,
+  .btn-out,.btn-danger,
+  .btn-primary,.btn-secondary,
+  .inv-actions,.exp-actions,
+  .recv-actions,.biz-exp-actions,
+  #inv-empty-notice,#monthly-alert,#overdue-alerts{
+    display:none!important;
+  }
+
+  /* Reset the app container - remove all transforms, fixed pos */
+  #app{
+    position:static!important;
+    overflow:visible!important;
+    top:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    right:auto!important;
+    transform:none!important;
+    max-width:100%!important;
+    width:100%!important;
+    height:auto!important;
+  }
+
+  /* Hide all pages except reports */
+  .page{display:none!important;}
+  #page-reports{
+    display:block!important;
+    padding:0!important;
+    width:100%!important;
+  }
+
+  /* Report area - full width, no clipping */
+  .report-area{
+    border:1px solid #ccc!important;
+    border-radius:0!important;
+    width:100%!important;
+    overflow:visible!important;
+    page-break-inside:auto!important;
+  }
+
+  /* Header stays dark */
+  .report-header-bar{
+    background:#1a1a1a!important;
+    color:#fff!important;
+    padding:14px 16px!important;
+    page-break-inside:avoid!important;
+    page-break-after:avoid!important;
+  }
+  .report-co-name,.report-co-sub,.report-doc-title,.report-period{color:#fff!important;}
+
+  /* Grand total bar stays dark */
+  .rep-grand-total{
+    background:#1a1a1a!important;
+    color:#fff!important;
+    page-break-inside:avoid!important;
+  }
+  .rep-grand-label,.rep-grand-val{color:#fff!important;}
+
+  /* Report body */
+  .report-body{
+    padding:14px 16px!important;
+    width:100%!important;
+    overflow:visible!important;
+  }
+
+  /* Tighten row spacing for print */
+  .rep-row{padding:4px 0!important;border-bottom:1px solid #e0e0e0!important;}
+  .rep-total-row{padding:7px 0!important;}
+  .rep-section-title{
+    font-size:8px!important;
+    letter-spacing:2px!important;
+    padding-bottom:5px!important;
+    margin-top:12px!important;
+    margin-bottom:6px!important;
+    border-bottom:1px solid #999!important;
+    color:#666!important;
+  }
+
+  /* Tables - full width, no horizontal scroll */
+  .inv-table{
+    width:100%!important;
+    table-layout:fixed!important;
+    font-size:10px!important;
+  }
+  .inv-table th{
+    background:#1a1a1a!important;
+    color:#fff!important;
+    padding:6px 8px!important;
+    font-size:8px!important;
+  }
+  .inv-table td{padding:5px 8px!important;}
+  .inv-table .cat-row td{
+    background:#f0f0f0!important;
+    font-size:8px!important;
+    padding:4px 8px!important;
+  }
+  div[style*="overflow-x:auto"]{overflow:visible!important;}
+
+  /* Ledger table in print */
+  .ledger-header,.ledger-row{
+    grid-template-columns:72px 1fr 80px 80px 85px!important;
+    font-size:9px!important;
+    gap:4px!important;
+  }
+  .ledger-header{
+    background:#f0f0f0!important;
+    border-bottom:1px solid #999!important;
+  }
+  .ledger-wrapper{overflow:visible!important;}
+
+  /* Sensible page breaks */
+  .rep-grand-total{page-break-inside:avoid!important;}
+  .report-header-bar{page-break-after:avoid!important;}
+  .rep-section-title{page-break-after:avoid!important;}
+  tr{page-break-inside:avoid!important;}
+
+  /* Fonts print visible */
+  .rep-row-label{color:#333!important;font-size:11px!important;}
+  .rep-row-val{color:#111!important;font-size:11px!important;}
+  .rep-total-label{color:#111!important;font-size:11px!important;font-weight:700!important;}
+  .rep-total-val{color:#111!important;font-size:13px!important;font-weight:700!important;}
+  .mono{font-family:monospace!important;}
+  .ledger-in{color:#1a5e32!important;}
+  .ledger-out{color:#7a1a1a!important;}
+  .ledger-bal{color:#111!important;font-weight:600!important;}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* CATEGORY CHIPS */
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.cat-chip{border:1px solid var(--border);padding:5px 11px;font-size:10px;font-weight:500;cursor:pointer;background:var(--white);border-radius:20px;color:var(--muted);}
+.cat-chip.active{background:var(--ink);color:var(--white);border-color:var(--ink);}
+
+/* ALERT */
+.alert{padding:12px 14px;margin-bottom:12px;border-radius:var(--radius);}
+.alert-warn{background:var(--amber-soft);border:1px solid #e8d8a0;color:var(--amber);}
+.alert-info{background:var(--surface);border:1px solid var(--border-soft);color:var(--muted);}
+.alert span{font-size:11px;line-height:1.5;}
+
+/* MONTH DEDUCT BADGE */
+.month-badge{display:inline-block;background:var(--green-soft);color:var(--green);font-size:9px;font-weight:600;letter-spacing:0.5px;padding:2px 7px;border-radius:2px;margin-left:6px;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" fill="#ffffff" stroke="none">
+        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span>BPH</span>
+      <span>Power Hub</span>
+    </div>
+  </div>
+  <span id="topbar-date"></span>
+  <button id="settings-btn" onclick="showPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="var(--muted)">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  </button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-label">Inventory</div>
+        <div class="dash-val" id="d-inventory">₹0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">Capital Bank</div>
+        <div class="dash-val" id="d-capital">₹0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">Profit Bank</div>
+        <div class="dash-val" id="d-profit">₹0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">Receivable</div>
+        <div class="dash-val" id="d-recv">₹0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">Payable</div>
+        <div class="dash-val" id="d-pay">₹0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">Expenses (MTD)</div>
+        <div class="dash-val" id="d-exp">₹0</div>
+      </div>
+      <div class="dash-card full highlight">
+        <div class="dash-label">Net Worth</div>
+        <div class="dash-val" id="d-networth">₹0</div>
+        <div id="d-growth" style="font-size:11px;margin-top:6px;font-family:var(--font-mono);"></div>
+        <div id="d-indicator"></div>
+      </div>
+      <div class="dash-card full">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div class="dash-label">Net Profit (After Expenses)</div>
+            <div class="dash-val" id="d-netprofit">₹0</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="dash-label">Gross Profit Earned</div>
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;margin-top:4px;" id="d-grossprofit">₹0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="inv-empty-notice"></div>
+    <div id="monthly-alert"></div>
+    <div style="margin-bottom:10px;">
+      <div class="sec-header" style="margin-bottom:10px;">
+        <span class="sec-title" style="font-size:16px;">QUICK ACTIONS</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn-primary" onclick="openSellModal()">+ SELL ITEM</button>
+        <button class="btn-secondary" onclick="openBuyModal()">+ BUY STOCK</button>
+        <button class="btn-secondary" onclick="openAddBizExpModal()">+ EXPENSE</button>
+        <button class="btn-secondary" onclick="openAddRecvModal()">+ RECEIVABLE</button>
+      </div>
+    </div>
+    <div id="overdue-alerts"></div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div id="page-inventory" class="page">
+    <div class="sec-header">
+      <span class="sec-title">INVENTORY</span>
+      <button class="btn-add" onclick="openAddItemModal()">+ ADD ITEM</button>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="filterInvCat('all',this)">All</button>
+      <button class="cat-tab" onclick="filterInvCat('E-Rickshaw',this)">E-Rick</button>
+      <button class="cat-tab" onclick="filterInvCat('Battery',this)">Battery</button>
+      <button class="cat-tab" onclick="filterInvCat('Spare Parts',this)">Spares</button>
+    </div>
+    <div id="inv-total-bar" class="inv-total-bar">
+      <span class="inv-total-label">Total Inventory Value</span>
+      <span class="inv-total-val" id="inv-total-val">₹0</span>
+    </div>
+    <div id="inv-list"></div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div id="page-expenses" class="page">
+    <div class="sec-header">
+      <span class="sec-title">EXPENSES</span>
+    </div>
+    <div class="acc-tab-bar" style="margin-bottom:14px;">
+      <button class="acc-tab active" onclick="switchExpTab('fixed',this)">Fixed Monthly</button>
+      <button class="acc-tab" onclick="switchExpTab('business',this)">Business</button>
+      <button class="acc-tab" onclick="switchExpTab('categories',this)">Categories</button>
+    </div>
+    <!-- Fixed Expenses -->
+    <div id="exp-fixed-panel">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button class="btn-add" onclick="openAddFixedExpModal()">+ ADD</button>
+      </div>
+      <div id="exp-fixed-list"></div>
+      <div class="exp-total-row">
+        <span class="exp-total-label">Monthly Total</span>
+        <span class="exp-total-val" id="fixed-exp-total">₹0</span>
+      </div>
+      <button class="btn-primary" onclick="deductFixedExpenses()" style="margin-top:8px;">DEDUCT MONTH'S FIXED EXPENSES NOW</button>
+    </div>
+    <!-- Business Expenses -->
+    <div id="exp-biz-panel" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button class="btn-add" onclick="openAddBizExpModal()">+ ADD</button>
+      </div>
+      <div id="biz-exp-filter" class="cat-chips"></div>
+      <div id="exp-biz-list"></div>
+    </div>
+    <!-- Categories -->
+    <div id="exp-cats-panel" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button class="btn-add" onclick="openAddCatModal()">+ ADD CATEGORY</button>
+      </div>
+      <div id="cat-list"></div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTS -->
+  <div id="page-accounts" class="page">
+    <div class="sec-header">
+      <span class="sec-title">ACCOUNTS</span>
+    </div>
+    <div class="acc-tab-bar">
+      <button class="acc-tab active" onclick="switchAccTab('capital',this)">Capital</button>
+      <button class="acc-tab" onclick="switchAccTab('profit',this)">Profit</button>
+      <button class="acc-tab" onclick="switchAccTab('recv',this)">Recv</button>
+      <button class="acc-tab" onclick="switchAccTab('pay',this)">Pay</button>
+    </div>
+    <!-- Capital Account -->
+    <div id="acc-capital-panel">
+      <div class="acc-balance-box">
+        <div class="acc-balance-label">Capital Bank Balance</div>
+        <div class="acc-balance-val" id="acc-cap-bal">₹0</div>
+      </div>
+      <button class="btn-out" onclick="openAdjCapModal()" style="margin-bottom:12px;">ADJUST BALANCE</button>
+      <div class="ledger-wrapper">
+        <div class="ledger-header">
+          <span>Date</span><span>Description</span><span>In (₹)</span><span>Out (₹)</span><span>Balance</span>
+        </div>
+        <div id="cap-ledger"></div>
+      </div>
+    </div>
+    <!-- Profit Account -->
+    <div id="acc-profit-panel" style="display:none;">
+      <div class="acc-balance-box">
+        <div class="acc-balance-label">Profit Bank Balance</div>
+        <div class="acc-balance-val" id="acc-profit-bal">₹0</div>
+      </div>
+      <button class="btn-out" onclick="openAdjProfModal()" style="margin-bottom:12px;">ADJUST BALANCE</button>
+      <div class="ledger-wrapper">
+        <div class="ledger-header">
+          <span>Date</span><span>Description</span><span>In (₹)</span><span>Out (₹)</span><span>Balance</span>
+        </div>
+        <div id="prof-ledger"></div>
+      </div>
+    </div>
+    <!-- Receivable -->
+    <div id="acc-recv-panel" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button class="btn-add" onclick="openAddRecvModal()">+ ADD</button>
+      </div>
+      <div id="recv-list"></div>
+    </div>
+    <!-- Payable -->
+    <div id="acc-pay-panel" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button class="btn-add" onclick="openAddPayModal()">+ ADD</button>
+      </div>
+      <div id="pay-list"></div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="page-reports" class="page">
+    <div class="sec-header">
+      <span class="sec-title">REPORTS</span>
+    </div>
+    <div class="report-filter">
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setReportPeriod('month',this)">This Month</button>
+        <button class="filter-btn" onclick="setReportPeriod('quarter',this)">This Quarter</button>
+        <button class="filter-btn" onclick="setReportPeriod('year',this)">This Year</button>
+        <button class="filter-btn" onclick="setReportPeriod('custom',this)">Custom</button>
+      </div>
+      <div class="date-row" id="custom-date-row" style="display:none;">
+        <label>From</label>
+        <input type="date" id="rep-from">
+        <label>To</label>
+        <input type="date" id="rep-to">
+        <button class="filter-btn active" onclick="renderCurrentReport()">GO</button>
+      </div>
+    </div>
+    <div class="report-types">
+      <button class="rep-type-btn active" onclick="switchReport('networth',this)">Net Worth</button>
+      <button class="rep-type-btn" onclick="switchReport('pl',this)">P&amp;L</button>
+      <button class="rep-type-btn" onclick="switchReport('inventory',this)">Stock</button>
+      <button class="rep-type-btn" onclick="switchReport('expense',this)">Expenses</button>
+      <button class="rep-type-btn" onclick="switchReport('ledger',this)">Ledger</button>
+    </div>
+    <div class="rep-actions">
+      <button class="btn-out" onclick="printReport()" style="display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Save PDF
+      </button>
+      <span style="font-size:10px;color:var(--muted);align-self:center;">On phone: choose <strong>Save as PDF</strong> in print dialog</span>
+    </div>
+    <div id="report-area" class="report-area"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="page-settings" class="page">
+    <div class="sec-header">
+      <span class="sec-title">SETTINGS</span>
+    </div>
+    <!-- Business Info -->
+    <div class="settings-section">
+      <div class="settings-title">Business Information</div>
+      <div class="settings-row">
+        <span class="settings-label">Business Name</span>
+        <span class="settings-val" id="s-name">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">GSTIN</span>
+        <span class="settings-val" id="s-gstin">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Address</span>
+        <span class="settings-val" id="s-addr" style="text-align:right;max-width:180px;font-size:10px;"></span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Phone</span>
+        <span class="settings-val" id="s-phone">—</span>
+      </div>
+      <button class="btn-primary" style="margin-top:10px;" onclick="openEditBizModal()">EDIT BUSINESS INFO</button>
+    </div>
+    <!-- Capital Investments -->
+    <div class="settings-section">
+      <div class="settings-title">Capital Investments</div>
+      <div id="cap-investments-list"></div>
+      <button class="btn-primary" style="margin-top:10px;" onclick="openAddCapInvModal()">+ ADD INVESTMENT</button>
+    </div>
+    <!-- Opening Balances -->
+    <div class="settings-section">
+      <div class="settings-title">Opening Balances</div>
+      <div class="alert alert-info"><span>Set your current account balances to start tracking from today. Use Adjust Balance buttons in Accounts.</span></div>
+    </div>
+    <!-- Backup / Restore -->
+    <div class="settings-section">
+      <div class="settings-title">Data Backup &amp; Restore</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="backupData()">EXPORT BACKUP (JSON)</button>
+        <button class="btn-out" onclick="document.getElementById('restore-input').click()">RESTORE FROM BACKUP</button>
+        <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(event)">
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn-danger" onclick="resetAllData()">RESET ALL DATA</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- BOTTOM NAV -->
+<nav id="bottomnav">
+  <button class="nav-btn active" onclick="showPage('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    Dash
+  </button>
+  <button class="nav-btn" onclick="showPage('inventory')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    Stock
+  </button>
+  <button class="nav-btn" onclick="showPage('expenses')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Expenses
+  </button>
+  <button class="nav-btn" onclick="showPage('accounts')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    Accounts
+  </button>
+  <button class="nav-btn" onclick="showPage('reports')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Reports
+  </button>
+</nav>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnBg(event)">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════════
+const DB = {
+  get:(k)=>{ try{return JSON.parse(localStorage.getItem('bph_'+k))||null}catch(e){return null}},
+  set:(k,v)=>localStorage.setItem('bph_'+k,JSON.stringify(v))
+};
+
+function initData(){
+  if(!DB.get('settings')){
+    DB.set('settings',{
+      businessName:'BISWAJIT POWER HUB',
+      gstin:'19AKFPH1283D1ZE',
+      address:'Nimtala, Chunakhali, Murshidabad, WB 742149',
+      phone:'9635505436 / 9775441797',
+      website:'biswajitpowerhub.in',
+      capitalInvestments:[{id:1,date:todayStr(),amount:1000000,note:'Starting Capital'}]
+    });
+  }
+  if(!DB.get('accounts')) DB.set('accounts',{capitalBank:0,profitBank:0,grossProfitEarned:0});
+  if(!DB.get('inventory')) DB.set('inventory',[]);
+  if(!DB.get('capLedger')) DB.set('capLedger',[]);
+  if(!DB.get('profLedger')) DB.set('profLedger',[]);
+  if(!DB.get('fixedExp')) DB.set('fixedExp',[
+    {id:1,name:'Rent',amount:8000,active:true},
+    {id:2,name:'Staff Salary',amount:5000,active:true},
+    {id:3,name:'Electricity',amount:2000,active:true}
+  ]);
+  if(!DB.get('bizExp')) DB.set('bizExp',[]);
+  if(!DB.get('expCats')) DB.set('expCats',['Transport','Bills','Repairs','Travel','Loading','Stationary','Other']);
+  if(!DB.get('receivables')) DB.set('receivables',[]);
+  if(!DB.get('payables')) DB.set('payables',[]);
+  if(!DB.get('lastMonthDeduct')) DB.set('lastMonthDeduct','');
+}
+
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0');
+}
+function fmtDate(s){
+  if(!s)return'—';
+  const p=s.split('-');
+  if(p.length!==3)return s;
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
+function fmtINR(n){
+  if(isNaN(n))return'₹0';
+  const abs=Math.abs(Math.round(n));
+  const s=abs.toString();
+  let res='';
+  if(s.length>3){
+    res=','+s.slice(-3);
+    let rem=s.slice(0,-3);
+    while(rem.length>2){res=','+rem.slice(-2)+res;rem=rem.slice(0,-2);}
+    res=rem+res;
+  }else{res=s;}
+  return(n<0?'−':'')+'₹'+res;
+}
+function uid(){return Date.now()+Math.random().toString(36).slice(2);}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const map={dashboard:0,inventory:1,expenses:2,accounts:3,reports:4,settings:-1};
+  const idx=map[name];
+  if(idx>=0) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  renderPage(name);
+}
+function renderPage(name){
+  if(name==='dashboard') renderDashboard();
+  else if(name==='inventory') renderInventory();
+  else if(name==='expenses') renderExpenses();
+  else if(name==='accounts') renderAccounts();
+  else if(name==='reports') renderCurrentReport();
+  else if(name==='settings') renderSettings();
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard(){
+  const inv=DB.get('inventory')||[];
+  const acc=DB.get('accounts')||{capitalBank:0,profitBank:0,grossProfitEarned:0};
+  const recv=DB.get('receivables')||[];
+  const pay=DB.get('payables')||[];
+  const fixedExp=DB.get('fixedExp')||[];
+  const bizExp=DB.get('bizExp')||[];
+  const settings=DB.get('settings')||{};
+
+  const invVal=inv.reduce((s,i)=>s+(i.quantity*i.purchaseRate),0);
+  const recvTotal=recv.filter(r=>!r.received).reduce((s,r)=>s+r.amount,0);
+  const payTotal=pay.filter(p=>!p.paid).reduce((s,p)=>s+p.amount,0);
+
+  // MTD expenses
+  const now=new Date();
+  const mStart=now.getFullYear()+'-'+(now.getMonth()+1).toString().padStart(2,'0')+'-01';
+  const fixedActive=fixedExp.filter(e=>e.active).reduce((s,e)=>s+e.amount,0);
+  const bizMTD=bizExp.filter(e=>e.date>=mStart).reduce((s,e)=>s+e.amount,0);
+  const totalExpMTD=fixedActive+bizMTD;
+
+  const netWorth=invVal+acc.capitalBank+acc.profitBank+recvTotal-payTotal;
+  const totalCapInv=(settings.capitalInvestments||[]).reduce((s,c)=>s+c.amount,0)||1000000;
+  const growth=netWorth-totalCapInv;
+  const netProfit=acc.profitBank;
+
+  const noticeEl=document.getElementById('inv-empty-notice');
+  if(inv.length===0){noticeEl.innerHTML='<div class="alert alert-info"><span>👋 Welcome! Start by adding your inventory items in the <strong>Stock</strong> tab, then adjust your opening bank balances in <strong>Accounts</strong>.</span></div>';}
+  else{noticeEl.innerHTML='';}
+  document.getElementById('d-inventory').textContent=fmtINR(invVal);
+  document.getElementById('d-capital').textContent=fmtINR(acc.capitalBank);
+  document.getElementById('d-profit').textContent=fmtINR(acc.profitBank);
+  document.getElementById('d-recv').textContent=fmtINR(recvTotal);
+  document.getElementById('d-pay').textContent=fmtINR(payTotal);
+  document.getElementById('d-exp').textContent=fmtINR(totalExpMTD);
+  document.getElementById('d-networth').textContent=fmtINR(netWorth);
+  document.getElementById('d-grossprofit').textContent=fmtINR(acc.grossProfitEarned||0);
+  document.getElementById('d-netprofit').textContent=fmtINR(netProfit);
+
+  const gEl=document.getElementById('d-growth');
+  gEl.textContent=(growth>=0?'▲ +':' ▼ ')+fmtINR(Math.abs(growth))+' vs Starting Capital';
+  gEl.style.color=growth>=0?'#6eff6e':'#ff6b6b';
+
+  const ind=document.getElementById('d-indicator');
+  if(netProfit>0){ind.innerHTML='<span class="profit-indicator pi-green">● PROFIT</span>';}
+  else if(netProfit<0){ind.innerHTML='<span class="profit-indicator pi-red">● LOSS</span>';}
+  else{ind.innerHTML='<span class="profit-indicator pi-yellow">● BREAK EVEN</span>';}
+
+  // Monthly deduct alert
+  const lastDeduct=DB.get('lastMonthDeduct')||'';
+  const currentMonth=now.getFullYear()+'-'+(now.getMonth()+1).toString().padStart(2,'0');
+  const alertEl=document.getElementById('monthly-alert');
+  if(lastDeduct!==currentMonth&&fixedActive>0){
+    alertEl.innerHTML=`<div class="alert alert-warn"><span>⚠ Fixed expenses of ${fmtINR(fixedActive)} not deducted this month. <a href="#" onclick="deductFixedExpenses();return false;" style="color:inherit;font-weight:700;text-decoration:underline;">DEDUCT NOW</a></span></div>`;
+  }else{alertEl.innerHTML='';}
+
+  // Overdue receivables
+  const overdueEl=document.getElementById('overdue-alerts');
+  const today=new Date();
+  const overdue=recv.filter(r=>{
+    if(r.received)return false;
+    const due=new Date(r.dueDate||r.date);
+    return(today-due)/(1000*60*60*24)>30;
+  });
+  if(overdue.length>0){
+    overdueEl.innerHTML=`<div class="alert alert-warn"><span>⚠ ${overdue.length} receivable(s) overdue 30+ days. Check Accounts → Recv.</span></div>`;
+  }else{overdueEl.innerHTML='';}
+}
+
+// ═══════════════════════════════════════════════
+// INVENTORY
+// ═══════════════════════════════════════════════
+let currentInvCat='all';
+function renderInventory(){
+  const inv=DB.get('inventory')||[];
+  const filtered=currentInvCat==='all'?inv:inv.filter(i=>i.category===currentInvCat);
+  const total=inv.reduce((s,i)=>s+(i.quantity*i.purchaseRate),0);
+  document.getElementById('inv-total-val').textContent=fmtINR(total);
+
+  const el=document.getElementById('inv-list');
+  if(filtered.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-text">No items found</div></div>';return;}
+
+  // Group by category if all
+  let html='';
+  if(currentInvCat==='all'){
+    const cats=['E-Rickshaw','Battery','Spare Parts'];
+    cats.forEach(cat=>{
+      const items=filtered.filter(i=>i.category===cat);
+      if(items.length===0)return;
+      html+=`<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:8px 0 4px;color:var(--muted);">${cat}</div>`;
+      items.forEach(i=>html+=invItemHTML(i));
+    });
+    // uncategorised
+    const other=filtered.filter(i=>!cats.includes(i.category));
+    if(other.length>0){
+      html+=`<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:8px 0 4px;color:var(--muted);">Other</div>`;
+      other.forEach(i=>html+=invItemHTML(i));
+    }
+  }else{
+    filtered.forEach(i=>html+=invItemHTML(i));
+  }
+  el.innerHTML=html;
+}
+function invItemHTML(i){
+  const val=i.quantity*i.purchaseRate;
+  const low=i.minStock&&i.quantity<=i.minStock;
+  return `<div class="inv-item${low?' inv-low':''}">
+    <div class="inv-item-row1">
+      <span class="inv-name">${i.name}</span>
+      <span class="inv-cat-tag">${i.category}</span>
+    </div>
+    <div class="inv-item-row2">
+      <div class="inv-stat"><div class="inv-stat-label">Units</div><div class="inv-stat-val">${i.quantity}</div></div>
+      <div class="inv-stat"><div class="inv-stat-label">Rate</div><div class="inv-stat-val">${fmtINR(i.purchaseRate)}</div></div>
+      <div class="inv-stat"><div class="inv-stat-label">Value</div><div class="inv-stat-val">${fmtINR(val)}</div></div>
+      ${i.minStock?`<div class="inv-stat"><div class="inv-stat-label">Min</div><div class="inv-stat-val">${i.minStock}</div></div>`:''}
+    </div>
+    <div class="inv-actions">
+      <button class="btn-sm" onclick='openSellModal("${i.id}")'>SELL</button>
+      <button class="btn-sm" onclick='openBuyModal("${i.id}")'>BUY</button>
+      <button class="btn-out" onclick='openEditItemModal("${i.id}")'>EDIT</button>
+      <button class="btn-danger" onclick='deleteItem("${i.id}")'>DEL</button>
+    </div>
+  </div>`;
+}
+function filterInvCat(cat,btn){
+  currentInvCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderInventory();
+}
+function deleteItem(id){
+  if(!confirm('Delete this item? Stock value will be removed.'))return;
+  let inv=DB.get('inventory')||[];
+  inv=inv.filter(i=>i.id!==id);
+  DB.set('inventory',inv);
+  renderInventory();
+  toast('Item deleted');
+}
+
+// ═══════════════════════════════════════════════
+// EXPENSES
+// ═══════════════════════════════════════════════
+function switchExpTab(tab,btn){
+  document.querySelectorAll('#page-expenses .acc-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('exp-fixed-panel').style.display=tab==='fixed'?'block':'none';
+  document.getElementById('exp-biz-panel').style.display=tab==='business'?'block':'none';
+  document.getElementById('exp-cats-panel').style.display=tab==='categories'?'block':'none';
+  if(tab==='business') renderBizExp();
+  if(tab==='categories') renderCats();
+  if(tab==='fixed') renderFixedExp();
+}
+function renderExpenses(){renderFixedExp();}
+function renderFixedExp(){
+  const exps=DB.get('fixedExp')||[];
+  const total=exps.filter(e=>e.active).reduce((s,e)=>s+e.amount,0);
+  document.getElementById('fixed-exp-total').textContent=fmtINR(total);
+  const el=document.getElementById('exp-fixed-list');
+  if(exps.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">No fixed expenses</div></div>';return;}
+  el.innerHTML=exps.map(e=>`
+    <div class="exp-item">
+      <div class="exp-item-left">
+        <div class="exp-item-name">${e.name}</div>
+        <div class="toggle-active">
+          <label class="toggle-switch">
+            <input type="checkbox" ${e.active?'checked':''} onchange="toggleFixedExp('${e.id}',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+          ${e.active?'<span style="font-size:9px;color:var(--green);font-weight:700;">ACTIVE</span>':'<span style="font-size:9px;color:var(--muted);font-weight:700;">PAUSED</span>'}
+        </div>
+      </div>
+      <div class="exp-item-right">
+        <div class="exp-amount">${fmtINR(e.amount)}</div>
+        <div class="exp-actions">
+          <button class="btn-out" onclick='editFixedExp("${e.id}")'>EDIT</button>
+          <button class="btn-danger" onclick='deleteFixedExp("${e.id}")'>DEL</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleFixedExp(id,active){
+  const exps=DB.get('fixedExp')||[];
+  const e=exps.find(x=>String(x.id)===String(id));
+  if(e){e.active=active;DB.set('fixedExp',exps);renderFixedExp();}
+}
+function deleteFixedExp(id){
+  if(!confirm('Delete this fixed expense?'))return;
+  let exps=DB.get('fixedExp')||[];
+  exps=exps.filter(e=>String(e.id)!==String(id));
+  DB.set('fixedExp',exps);
+  renderFixedExp();toast('Deleted');
+}
+function editFixedExp(id){
+  const exps=DB.get('fixedExp')||[];
+  const e=exps.find(x=>String(x.id)===String(id));
+  if(!e)return;
+  openModal('EDIT FIXED EXPENSE',`
+    <div class="form-group"><label class="form-label">Expense Name</label><input class="form-input" id="fexp-name" value="${e.name}"></div>
+    <div class="form-group"><label class="form-label">Monthly Amount (₹)</label><input class="form-input" type="number" id="fexp-amt" value="${e.amount}"></div>
+  `,()=>{
+    e.name=document.getElementById('fexp-name').value.trim();
+    e.amount=parseFloat(document.getElementById('fexp-amt').value)||0;
+    if(!e.name)return toast('Enter name');
+    DB.set('fixedExp',exps);closeModal();renderFixedExp();toast('Updated');
+  });
+}
+function deductFixedExpenses(){
+  const exps=DB.get('fixedExp')||[];
+  const active=exps.filter(e=>e.active);
+  if(active.length===0)return toast('No active fixed expenses');
+  const total=active.reduce((s,e)=>s+e.amount,0);
+  const now=new Date();
+  const currentMonth=now.getFullYear()+'-'+(now.getMonth()+1).toString().padStart(2,'0');
+  const lastDeduct=DB.get('lastMonthDeduct')||'';
+
+  openModal('DEDUCT FIXED EXPENSES',`
+    <div class="confirm-box">
+      <strong>Monthly Fixed Expenses Deduction</strong>
+      ${active.map(e=>`<div class="confirm-row"><span class="confirm-label">${e.name}</span><span class="confirm-val red">−${fmtINR(e.amount)}</span></div>`).join('')}
+      <div class="confirm-row" style="margin-top:8px;border-top:2px solid var(--ink);padding-top:8px;"><span class="confirm-label"><strong>Total Deduction</strong></span><span class="confirm-val red"><strong>−${fmtINR(total)}</strong></span></div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);">This will deduct from your <strong>Profit Account</strong>. Capital stays protected.</p>
+    ${lastDeduct===currentMonth?'<div class="alert alert-warn"><span>⚠ Already deducted this month!</span></div>':''}
+  `,()=>{
+    const latestDeduct=DB.get('lastMonthDeduct')||'';
+    const nowMonth=new Date().getFullYear()+'-'+(new Date().getMonth()+1).toString().padStart(2,'0');
+    if(latestDeduct===nowMonth){closeModal();return toast('Already deducted this month!');}
+    const acc=DB.get('accounts')||{};
+    acc.profitBank=(acc.profitBank||0)-total;
+    DB.set('accounts',acc);
+    const profLedger=DB.get('profLedger')||[];
+    let bal=acc.profitBank+total;
+    active.forEach(e=>{
+      bal-=e.amount;
+      profLedger.push({id:uid(),date:todayStr(),desc:`Fixed Expense: ${e.name}`,in:0,out:e.amount,bal:bal});
+    });
+    DB.set('profLedger',profLedger);
+    DB.set('lastMonthDeduct',currentMonth);
+    closeModal();renderExpenses();
+    if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+    toast(`Deducted ${fmtINR(total)} from Profit`);
+  });
+}
+let bizExpFilter='all';
+function renderBizExp(){
+  const cats=DB.get('expCats')||[];
+  const exps=DB.get('bizExp')||[];
+  // Filter chips
+  const filterEl=document.getElementById('biz-exp-filter');
+  filterEl.innerHTML=`<div class="cat-chip${bizExpFilter==='all'?' active':''}" onclick="setBizFilter('all',this)">All</div>`+
+    cats.map(c=>`<div class="cat-chip${bizExpFilter===c?' active':''}" onclick="setBizFilter('${c}',this)">${c}</div>`).join('');
+
+  const filtered=bizExpFilter==='all'?exps:exps.filter(e=>e.category===bizExpFilter);
+  filtered.sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('exp-biz-list');
+  if(filtered.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">No expenses yet</div></div>';return;}
+  el.innerHTML=filtered.map(e=>`
+    <div class="biz-exp-item">
+      <div class="biz-exp-row1">
+        <span class="biz-exp-cat">${e.category}</span>
+        <span class="biz-exp-date">${fmtDate(e.date)}</span>
+      </div>
+      ${e.note?`<div class="biz-exp-note">${e.note}</div>`:''}
+      <div class="biz-exp-row2">
+        <span class="biz-exp-amount" style="color:var(--red);">−${fmtINR(e.amount)}</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-out" onclick='editBizExp("${e.id}")'>EDIT</button>
+          <button class="btn-danger" onclick='deleteBizExp("${e.id}")'>DEL</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function setBizFilter(cat,el){
+  bizExpFilter=cat;
+  document.querySelectorAll('#biz-exp-filter .cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderBizExp();
+}
+function deleteBizExp(id){
+  if(!confirm('Delete this expense? Amount will be reversed from Profit.'))return;
+  let exps=DB.get('bizExp')||[];
+  const e=exps.find(x=>x.id===id);
+  if(!e)return;
+  const acc=DB.get('accounts')||{};
+  acc.profitBank=(acc.profitBank||0)+e.amount; // reverse
+  DB.set('accounts',acc);
+  exps=exps.filter(x=>x.id!==id);
+  DB.set('bizExp',exps);
+  // reverse ledger entry
+  const pl=DB.get('profLedger')||[];
+  pl.push({id:uid(),date:todayStr(),desc:`Reversed: ${e.category} expense`,in:e.amount,out:0,bal:acc.profitBank});
+  DB.set('profLedger',pl);
+  renderBizExp();toast('Expense deleted & reversed');
+}
+function editBizExp(id){
+  const exps=DB.get('bizExp')||[];
+  const e=exps.find(x=>x.id===id);
+  if(!e)return;
+  const cats=DB.get('expCats')||[];
+  openModal('EDIT EXPENSE',`
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="be-date" value="${e.date}"></div>
+    <div class="form-group"><label class="form-label">Category</label>
+      <select class="form-select" id="be-cat">${cats.map(c=>`<option value="${c}"${c===e.category?' selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="be-amt" value="${e.amount}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="be-note" value="${e.note||''}"></div>
+  `,()=>{
+    const newAmt=(parseFloat(document.getElementById('be-amt').value)||0);
+    const diff=newAmt - e.amount;
+    const acc=DB.get('accounts')||{};
+    // Reverse old amount, apply new amount to profit bank
+    acc.profitBank=(acc.profitBank||0)+e.amount-newAmt;
+    e.date=document.getElementById('be-date').value;
+    e.category=document.getElementById('be-cat').value;
+    e.amount=newAmt;
+    e.note=document.getElementById('be-note').value;
+    DB.set('accounts',acc);
+    DB.set('bizExp',exps);
+    if(diff!==0){
+      const pl=DB.get('profLedger')||[];
+      pl.push({id:uid(),date:todayStr(),desc:`Adjustment: ${e.category} expense`,in:diff<0?Math.abs(diff):0,out:diff>0?diff:0,bal:acc.profitBank});
+      DB.set('profLedger',pl);
+    }
+    closeModal();renderBizExp();toast('Updated');
+  });
+}
+function renderCats(){
+  const cats=DB.get('expCats')||[];
+  const el=document.getElementById('cat-list');
+  if(cats.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">🏷</div><div class="empty-state-text">No categories</div></div>';return;}
+  el.innerHTML=cats.map((c,i)=>`
+    <div class="exp-item">
+      <div class="exp-item-left"><div class="exp-item-name">${c}</div></div>
+      <div class="exp-item-right"><div class="exp-actions">
+        <button class="btn-out" onclick="editCat(${i})">EDIT</button>
+        <button class="btn-danger" onclick="deleteCat(${i})">DEL</button>
+      </div></div>
+    </div>`).join('');
+}
+function deleteCat(i){
+  if(!confirm('Delete this category?'))return;
+  const cats=DB.get('expCats')||[];
+  cats.splice(i,1);DB.set('expCats',cats);renderCats();toast('Deleted');
+}
+function editCat(i){
+  const cats=DB.get('expCats')||[];
+  openModal('EDIT CATEGORY',`
+    <div class="form-group"><label class="form-label">Category Name</label><input class="form-input" id="cat-name" value="${cats[i]}"></div>
+  `,()=>{
+    const v=document.getElementById('cat-name').value.trim();
+    if(!v)return toast('Enter name');
+    cats[i]=v;DB.set('expCats',cats);closeModal();renderCats();toast('Updated');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ACCOUNTS
+// ═══════════════════════════════════════════════
+function switchAccTab(tab,btn){
+  document.querySelectorAll('#page-accounts .acc-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['capital','profit','recv','pay'].forEach(t=>{
+    document.getElementById('acc-'+t+'-panel').style.display=t===tab?'block':'none';
+  });
+  if(tab==='capital') renderCapLedger();
+  if(tab==='profit') renderProfLedger();
+  if(tab==='recv') renderRecv();
+  if(tab==='pay') renderPay();
+}
+function renderAccounts(){renderCapLedger();}
+function renderCapLedger(){
+  const acc=DB.get('accounts')||{};
+  document.getElementById('acc-cap-bal').textContent=fmtINR(acc.capitalBank||0);
+  const ledger=DB.get('capLedger')||[];
+  const el=document.getElementById('cap-ledger');
+  if(ledger.length===0){el.innerHTML='<div class="empty-state" style="padding:20px;"><div class="empty-state-text">No transactions yet. Adjust balance to set opening.</div></div>';return;}
+  el.innerHTML=[...ledger].reverse().map(r=>`
+    <div class="ledger-row">
+      <span class="ledger-date">${fmtDate(r.date)}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.desc}</span>
+      <span class="ledger-in">${r.in?fmtINR(r.in):''}</span>
+      <span class="ledger-out">${r.out?fmtINR(r.out):''}</span>
+      <span class="ledger-bal">${fmtINR(r.bal)}</span>
+    </div>`).join('');
+}
+function renderProfLedger(){
+  const acc=DB.get('accounts')||{};
+  document.getElementById('acc-profit-bal').textContent=fmtINR(acc.profitBank||0);
+  const ledger=DB.get('profLedger')||[];
+  const el=document.getElementById('prof-ledger');
+  if(ledger.length===0){el.innerHTML='<div class="empty-state" style="padding:20px;"><div class="empty-state-text">No transactions yet.</div></div>';return;}
+  el.innerHTML=[...ledger].reverse().map(r=>`
+    <div class="ledger-row">
+      <span class="ledger-date">${fmtDate(r.date)}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.desc}</span>
+      <span class="ledger-in">${r.in?fmtINR(r.in):''}</span>
+      <span class="ledger-out">${r.out?fmtINR(r.out):''}</span>
+      <span class="ledger-bal">${fmtINR(r.bal)}</span>
+    </div>`).join('');
+}
+function renderRecv(){
+  const recv=DB.get('receivables')||[];
+  const el=document.getElementById('recv-list');
+  if(recv.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">📥</div><div class="empty-state-text">No receivables</div></div>';return;}
+  const today=new Date();
+  el.innerHTML=recv.map(r=>{
+    const due=new Date(r.dueDate||r.date);
+    const overdue=!r.received&&(today-due)/(1000*60*60*24)>30;
+    return `<div class="recv-item${overdue?' overdue':''}${r.received?' received':''}">
+      <div class="recv-item-row1">
+        <span class="recv-name">${r.name}</span>
+        <span class="recv-amount" style="color:${r.received?'var(--green)':'var(--ink)'}">${fmtINR(r.amount)}</span>
+      </div>
+      <div class="recv-meta">${fmtDate(r.date)}${r.note?' · '+r.note:''} ${overdue?'<span class="recv-overdue-tag">OVERDUE</span>':''} ${r.received?'<span style="font-size:9px;background:var(--green);color:white;padding:1px 5px;letter-spacing:1px;">RECEIVED</span>':''}</div>
+      <div class="recv-actions">
+        ${!r.received?`<button class="btn-sm" onclick='markRecvReceived("${r.id}")'>MARK RECEIVED</button>`:''}
+        <button class="btn-out" onclick='editRecv("${r.id}")'>EDIT</button>
+        <button class="btn-danger" onclick='deleteRecv("${r.id}")'>DEL</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function markRecvReceived(id){
+  const recv=DB.get('receivables')||[];
+  const r=recv.find(x=>x.id===id);
+  if(!r)return;
+  if(r.received)return toast('Already marked as received');
+  openModal('MARK AS RECEIVED',`
+    <div class="confirm-box">
+      <strong>${r.name}</strong>
+      <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-val green">${fmtINR(r.amount)}</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);">This will add ${fmtINR(r.amount)} to your Capital Bank.</p>
+  `,()=>{
+    r.received=true;r.receivedDate=todayStr();
+    const acc=DB.get('accounts')||{};
+    acc.capitalBank=(acc.capitalBank||0)+r.amount;
+    DB.set('accounts',acc);
+    const cl=DB.get('capLedger')||[];
+    cl.push({id:uid(),date:todayStr(),desc:`Received from: ${r.name}`,in:r.amount,out:0,bal:acc.capitalBank});
+    DB.set('capLedger',cl);
+    DB.set('receivables',recv);
+    closeModal();renderRecv();toast(`${fmtINR(r.amount)} added to Capital`);
+  });
+}
+function deleteRecv(id){
+  if(!confirm('Delete this receivable?'))return;
+  let recv=DB.get('receivables')||[];
+  recv=recv.filter(r=>r.id!==id);
+  DB.set('receivables',recv);renderRecv();toast('Deleted');
+}
+function editRecv(id){
+  const recv=DB.get('receivables')||[];
+  const r=recv.find(x=>x.id===id);
+  if(!r)return;
+  openModal('EDIT RECEIVABLE',`
+    <div class="form-group"><label class="form-label">Customer Name</label><input class="form-input" id="r-name" value="${r.name}"></div>
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="r-amt" value="${r.amount}"${r.received?' disabled title="Cannot change amount after marking received"':''}></div>
+    ${r.received?'<div class="alert alert-info" style="margin-bottom:0;"><span>Amount locked — already received and credited to Capital Bank.</span></div>':''}
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="r-date" value="${r.date}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="r-note" value="${r.note||''}"></div>
+  `,()=>{
+    r.name=document.getElementById('r-name').value.trim();
+    if(!r.received) r.amount=parseFloat(document.getElementById('r-amt').value)||0;
+    r.date=document.getElementById('r-date').value;
+    r.note=document.getElementById('r-note').value;
+    if(!r.name)return toast('Enter name');
+    DB.set('receivables',recv);closeModal();renderRecv();toast('Updated');
+  });
+}
+function renderPay(){
+  const pay=DB.get('payables')||[];
+  const el=document.getElementById('pay-list');
+  if(pay.length===0){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">📤</div><div class="empty-state-text">No payables</div></div>';return;}
+  el.innerHTML=pay.map(p=>`
+    <div class="recv-item${p.paid?' received':''}">
+      <div class="recv-item-row1">
+        <span class="recv-name">${p.name}</span>
+        <span class="recv-amount" style="color:${p.paid?'var(--muted)':'var(--red)'}">${fmtINR(p.amount)}</span>
+      </div>
+      <div class="recv-meta">${fmtDate(p.date)}${p.note?' · '+p.note:''} ${p.paid?'<span style="font-size:9px;background:var(--muted);color:white;padding:1px 5px;letter-spacing:1px;">PAID</span>':''}</div>
+      <div class="recv-actions">
+        ${!p.paid?`<button class="btn-sm" onclick='markPayPaid("${p.id}")'>MARK PAID</button>`:''}
+        <button class="btn-out" onclick='editPay("${p.id}")'>EDIT</button>
+        <button class="btn-danger" onclick='deletePay("${p.id}")'>DEL</button>
+      </div>
+    </div>`).join('');
+}
+function markPayPaid(id){
+  const pay=DB.get('payables')||[];
+  const p=pay.find(x=>x.id===id);
+  if(!p)return;
+  openModal('MARK AS PAID',`
+    <div class="confirm-box">
+      <strong>${p.name}</strong>
+      <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-val red">−${fmtINR(p.amount)}</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);">This will deduct ${fmtINR(p.amount)} from your Capital Bank.</p>
+  `,()=>{
+    p.paid=true;p.paidDate=todayStr();
+    const acc=DB.get('accounts')||{};
+    acc.capitalBank=(acc.capitalBank||0)-p.amount;
+    DB.set('accounts',acc);
+    const cl=DB.get('capLedger')||[];
+    cl.push({id:uid(),date:todayStr(),desc:`Paid to: ${p.name}`,in:0,out:p.amount,bal:acc.capitalBank});
+    DB.set('capLedger',cl);
+    DB.set('payables',pay);
+    closeModal();renderPay();toast(`Paid ${fmtINR(p.amount)}`);
+  });
+}
+function deletePay(id){
+  if(!confirm('Delete this payable?'))return;
+  let pay=DB.get('payables')||[];
+  pay=pay.filter(p=>p.id!==id);
+  DB.set('payables',pay);renderPay();toast('Deleted');
+}
+function editPay(id){
+  const pay=DB.get('payables')||[];
+  const p=pay.find(x=>x.id===id);
+  if(!p)return;
+  openModal('EDIT PAYABLE',`
+    <div class="form-group"><label class="form-label">Supplier Name</label><input class="form-input" id="p-name" value="${p.name}"></div>
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="p-amt" value="${p.amount}"></div>
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="p-date" value="${p.date}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="p-note" value="${p.note||''}"></div>
+  `,()=>{
+    p.name=document.getElementById('p-name').value.trim();
+    p.amount=parseFloat(document.getElementById('p-amt').value)||0;
+    p.date=document.getElementById('p-date').value;
+    p.note=document.getElementById('p-note').value;
+    if(!p.name)return toast('Enter name');
+    DB.set('payables',pay);closeModal();renderPay();toast('Updated');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SELL / BUY MODALS
+// ═══════════════════════════════════════════════
+function openSellModal(preId){
+  const inv=DB.get('inventory')||[];
+  if(inv.length===0){return toast('Add inventory items first');}
+  const opts=inv.map(i=>`<option value="${i.id}"${i.id===preId?' selected':''}>${i.name} (Stock: ${i.quantity}) @ ${fmtINR(i.purchaseRate)}</option>`).join('');
+  openModal('SELL ITEM',`
+    <div class="form-group"><label class="form-label">Select Item</label>
+      <select class="form-select" id="sell-item" onchange="updateSellPreview()">${opts}</select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Units Sold</label><input class="form-input" type="number" min="1" id="sell-units" value="1" oninput="updateSellPreview()"></div>
+      <div class="form-group"><label class="form-label">Selling Price/Unit (₹)</label><input class="form-input" type="number" id="sell-price" min="0.01" step="0.01" oninput="updateSellPreview()"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="sell-date" value="${todayStr()}"></div>
+    <div id="sell-preview"></div>
+  `,()=>executeSell());
+  setTimeout(updateSellPreview,100);
+}
+function updateSellPreview(){
+  const inv=DB.get('inventory')||[];
+  const id=document.getElementById('sell-item')?.value;
+  const item=inv.find(i=>i.id===id);
+  if(!item)return;
+  const units=parseInt(document.getElementById('sell-units')?.value)||0;
+  const price=parseFloat(document.getElementById('sell-price')?.value)||0;
+  const totalSale=units*price;
+  const cost=units*item.purchaseRate;
+  const profit=totalSale-cost;
+  document.getElementById('sell-preview').innerHTML=`
+    <div class="confirm-box" style="margin-top:10px;">
+      <strong>Confirmation Preview</strong>
+      <div class="confirm-row"><span class="confirm-label">Item</span><span class="confirm-val">${item.name}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Units Sold</span><span class="confirm-val">${units}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Total Sale Amount</span><span class="confirm-val green">+${fmtINR(totalSale)}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Cost Price</span><span class="confirm-val">${fmtINR(cost)}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Profit → Profit A/C</span><span class="confirm-val ${profit>=0?'green':'red'}">${profit>=0?'+':''}${fmtINR(profit)}${profit<0?' ⚠ SELLING BELOW COST':''}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Stock After</span><span class="confirm-val">${item.quantity} → ${item.quantity-units}</span></div>
+    </div>`;
+}
+function executeSell(){
+  const inv=DB.get('inventory')||[];
+  const id=document.getElementById('sell-item').value;
+  const item=inv.find(i=>i.id===id);
+  if(!item)return toast('Select item');
+  const units=parseInt(document.getElementById('sell-units').value)||0;
+  const price=parseFloat(document.getElementById('sell-price').value)||0;
+  const date=document.getElementById('sell-date').value;
+  if(units<=0||isNaN(units))return toast('Enter valid units');
+  if(price<=0||isNaN(price))return toast('Enter valid selling price');
+  if(units>item.quantity)return toast('Not enough stock!');
+
+  const totalSale=units*price;
+  const cost=units*item.purchaseRate;
+  const profit=totalSale-cost;
+
+  item.quantity-=units;
+  DB.set('inventory',inv);
+
+  const acc=DB.get('accounts')||{};
+  acc.capitalBank=(acc.capitalBank||0)+totalSale;
+  acc.profitBank=(acc.profitBank||0)+profit;
+  acc.grossProfitEarned=(acc.grossProfitEarned||0)+profit;
+  DB.set('accounts',acc);
+
+  const cl=DB.get('capLedger')||[];
+  cl.push({id:uid(),date,desc:`Sale: ${item.name} x${units}`,in:totalSale,out:0,bal:acc.capitalBank});
+  DB.set('capLedger',cl);
+
+  const pl=DB.get('profLedger')||[];
+  pl.push({id:uid(),date,desc:`Profit: ${item.name} x${units} @ ${fmtINR(price)}`,in:profit>0?profit:0,out:profit<0?Math.abs(profit):0,bal:acc.profitBank});
+  DB.set('profLedger',pl);
+
+  // Store in sales log for reporting
+  const salesLog=DB.get('salesLog')||[];
+  salesLog.push({id:uid(),date,item:item.name,category:item.category,units,purchaseRate:item.purchaseRate,sellingPrice:price,totalSale,cost,profit});
+  DB.set('salesLog',salesLog);
+  closeModal();
+  renderInventory();
+  if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+  toast(`Sold! +${fmtINR(profit)} profit`);
+}
+
+function openBuyModal(preId){
+  const inv=DB.get('inventory')||[];
+  if(inv.length===0){return toast('Add an inventory item first');}
+  const opts=inv.map(i=>`<option value="${i.id}"${i.id===preId?' selected':''}>${i.name} (Stock: ${i.quantity})</option>`).join('');
+  openModal('BUY STOCK',`
+    <div class="form-group"><label class="form-label">Select Item</label>
+      <select class="form-select" id="buy-item" onchange="updateBuyPreview()">${opts}</select>
+    </div>
+    <div class="form-group"><label class="form-label">Add New Item Instead?</label>
+      <button type="button" class="btn-out" onclick="closeModal();openAddItemModal()">+ CREATE NEW ITEM</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Units Bought</label><input class="form-input" type="number" min="1" id="buy-units" value="1" oninput="updateBuyPreview()"></div>
+      <div class="form-group"><label class="form-label">Purchase Price/Unit (₹)</label><input class="form-input" type="number" id="buy-rate" min="0.01" step="0.01" oninput="updateBuyPreview()"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="buy-date" value="${todayStr()}"></div>
+    <div id="buy-preview"></div>
+  `,()=>executeBuy());
+  setTimeout(updateBuyPreview,100);
+}
+function updateBuyPreview(){
+  const inv=DB.get('inventory')||[];
+  const id=document.getElementById('buy-item')?.value;
+  const item=inv.find(i=>i.id===id);
+  if(!item)return;
+  const units=parseInt(document.getElementById('buy-units')?.value)||0;
+  const rate=parseFloat(document.getElementById('buy-rate')?.value)||item.purchaseRate;
+  const total=units*rate;
+  document.getElementById('buy-preview').innerHTML=`
+    <div class="confirm-box" style="margin-top:10px;">
+      <strong>Confirmation Preview</strong>
+      <div class="confirm-row"><span class="confirm-label">Item</span><span class="confirm-val">${item.name}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Units</span><span class="confirm-val">${units}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Total Cost</span><span class="confirm-val red">−${fmtINR(total)}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Capital Bank</span><span class="confirm-val red">−${fmtINR(total)}</span></div>
+      <div class="confirm-row"><span class="confirm-label">Stock After</span><span class="confirm-val">${item.quantity} → ${item.quantity+units}</span></div>
+    </div>`;
+}
+function executeBuy(){
+  const inv=DB.get('inventory')||[];
+  const id=document.getElementById('buy-item').value;
+  const item=inv.find(i=>i.id===id);
+  if(!item)return toast('Select item');
+  const units=parseInt(document.getElementById('buy-units').value)||0;
+  const rate=parseFloat(document.getElementById('buy-rate').value)||0;
+  const date=document.getElementById('buy-date').value;
+  if(units<=0||isNaN(units))return toast('Enter valid units');
+  if(rate<=0||isNaN(rate))return toast('Enter valid purchase rate');
+
+  const total=units*rate;
+  // Weighted average costing: blends old and new purchase rates
+  const oldValue=item.quantity*item.purchaseRate;
+  const newValue=units*rate;
+  item.quantity+=units;
+  item.purchaseRate=Math.round((oldValue+newValue)/item.quantity);
+  DB.set('inventory',inv);
+
+  const acc=DB.get('accounts')||{};
+  acc.capitalBank=(acc.capitalBank||0)-total;
+  DB.set('accounts',acc);
+
+  const cl=DB.get('capLedger')||[];
+  cl.push({id:uid(),date,desc:`Purchase: ${item.name} x${units} @ ${fmtINR(rate)}`,in:0,out:total,bal:acc.capitalBank});
+  DB.set('capLedger',cl);
+
+  closeModal();renderInventory();
+  if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+  toast(`Stock added! −${fmtINR(total)} from Capital`);
+}
+
+// ═══════════════════════════════════════════════
+// ADD ITEM MODAL
+// ═══════════════════════════════════════════════
+function openAddItemModal(){
+  openModal('ADD INVENTORY ITEM',`
+    <div class="form-group"><label class="form-label">Item Name</label><input class="form-input" id="ai-name" placeholder="e.g. Ceeon Ola"></div>
+    <div class="form-group"><label class="form-label">Category</label>
+      <select class="form-select" id="ai-cat">
+        <option>E-Rickshaw</option><option>Battery</option><option>Spare Parts</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Opening Quantity</label><input class="form-input" type="number" id="ai-qty" value="0"></div>
+      <div class="form-group"><label class="form-label">Purchase Rate (₹)</label><input class="form-input" type="number" id="ai-rate" value="0"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Minimum Stock Alert</label><input class="form-input" type="number" id="ai-min" value="1" placeholder="Alert when stock ≤ this"></div>
+  `,()=>{
+    const name=document.getElementById('ai-name').value.trim();
+    const cat=document.getElementById('ai-cat').value;
+    const qty=parseInt(document.getElementById('ai-qty').value)||0;
+    const rate=parseFloat(document.getElementById('ai-rate').value)||0;
+    const min=parseInt(document.getElementById('ai-min').value)||1;
+    if(!name)return toast('Enter item name');
+    const inv=DB.get('inventory')||[];
+    inv.push({id:uid(),name,category:cat,quantity:qty,purchaseRate:rate,minStock:min});
+    DB.set('inventory',inv);
+    closeModal();renderInventory();toast('Item added');
+  });
+}
+function openEditItemModal(id){
+  const inv=DB.get('inventory')||[];
+  const item=inv.find(i=>i.id===id);
+  if(!item)return;
+  openModal('EDIT ITEM',`
+    <div class="form-group"><label class="form-label">Item Name</label><input class="form-input" id="ei-name" value="${item.name}"></div>
+    <div class="form-group"><label class="form-label">Category</label>
+      <select class="form-select" id="ei-cat">
+        <option${item.category==='E-Rickshaw'?' selected':''}>E-Rickshaw</option>
+        <option${item.category==='Battery'?' selected':''}>Battery</option>
+        <option${item.category==='Spare Parts'?' selected':''}>Spare Parts</option>
+        <option${item.category==='Other'?' selected':''}>Other</option>
+      </select>
+    </div>
+    <div class="alert alert-info" style="margin-bottom:10px;"><span>Note: Changing Qty here is a correction only — it does NOT affect Capital Bank. Use BUY/SELL for real transactions.</span></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Qty (Correction Only)</label><input class="form-input" type="number" id="ei-qty" value="${item.quantity}"></div>
+      <div class="form-group"><label class="form-label">Purchase Rate (₹)</label><input class="form-input" type="number" id="ei-rate" value="${item.purchaseRate}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Min Stock Alert</label><input class="form-input" type="number" id="ei-min" value="${item.minStock||1}"></div>
+  `,()=>{
+    item.name=document.getElementById('ei-name').value.trim();
+    item.category=document.getElementById('ei-cat').value;
+    item.quantity=parseInt(document.getElementById('ei-qty').value)||0;
+    item.purchaseRate=parseFloat(document.getElementById('ei-rate').value)||0;
+    item.minStock=parseInt(document.getElementById('ei-min').value)||1;
+    if(!item.name)return toast('Enter name');
+    DB.set('inventory',inv);closeModal();renderInventory();toast('Updated');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ADD EXPENSE MODALS
+// ═══════════════════════════════════════════════
+function openAddFixedExpModal(){
+  openModal('ADD FIXED EXPENSE',`
+    <div class="form-group"><label class="form-label">Expense Name</label><input class="form-input" id="fe-name" placeholder="e.g. Rent"></div>
+    <div class="form-group"><label class="form-label">Monthly Amount (₹)</label><input class="form-input" type="number" id="fe-amt" min="0" step="0.01"></div>
+  `,()=>{
+    const name=document.getElementById('fe-name').value.trim();
+    const amt=parseFloat(document.getElementById('fe-amt').value)||0;
+    if(!name)return toast('Enter name');
+    if(!amt)return toast('Enter amount');
+    const exps=DB.get('fixedExp')||[];
+    exps.push({id:uid(),name,amount:amt,active:true});
+    DB.set('fixedExp',exps);closeModal();renderFixedExp();toast('Added');
+  });
+}
+function openAddBizExpModal(){
+  const cats=DB.get('expCats')||[];
+  if(cats.length===0){return toast('Add a category first in Expenses → Categories');}
+  openModal('ADD BUSINESS EXPENSE',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="be-date" value="${todayStr()}"></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="be-amt" min="0.01" step="0.01"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Category</label>
+      <select class="form-select" id="be-cat">${cats.map(c=>`<option>${c}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label class="form-label">Note (Optional)</label><input class="form-input" id="be-note" placeholder="e.g. Delivery to Berhampore"></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px;">Will deduct from <strong>Profit Account</strong>.</p>
+  `,()=>{
+    const date=document.getElementById('be-date').value;
+    const amt=parseFloat(document.getElementById('be-amt').value)||0;
+    const cat=document.getElementById('be-cat').value;
+    const note=document.getElementById('be-note').value;
+    if(!amt)return toast('Enter amount');
+
+    const acc=DB.get('accounts')||{};
+    acc.profitBank=(acc.profitBank||0)-amt;
+    DB.set('accounts',acc);
+
+    const pl=DB.get('profLedger')||[];
+    pl.push({id:uid(),date,desc:`${cat}: ${note||'Business expense'}`,in:0,out:amt,bal:acc.profitBank});
+    DB.set('profLedger',pl);
+
+    const exps=DB.get('bizExp')||[];
+    exps.push({id:uid(),date,category:cat,amount:amt,note});
+    DB.set('bizExp',exps);
+
+    closeModal();
+    if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+    if(document.getElementById('exp-biz-panel').style.display!=='none') renderBizExp();
+    toast(`−${fmtINR(amt)} from Profit`);
+  });
+}
+function openAddCatModal(){
+  openModal('ADD CATEGORY',`
+    <div class="form-group"><label class="form-label">Category Name</label><input class="form-input" id="nc-name"></div>
+  `,()=>{
+    const v=document.getElementById('nc-name').value.trim();
+    if(!v)return toast('Enter name');
+    const cats=DB.get('expCats')||[];
+    if(cats.includes(v))return toast('Already exists');
+    cats.push(v);DB.set('expCats',cats);closeModal();renderCats();toast('Added');
+  });
+}
+function openAddRecvModal(){
+  openModal('ADD RECEIVABLE',`
+    <div class="form-group"><label class="form-label">Customer Name</label><input class="form-input" id="nr-name"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="nr-amt" min="0" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="nr-date" value="${todayStr()}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="nr-note"></div>
+  `,()=>{
+    const name=document.getElementById('nr-name').value.trim();
+    const amt=parseFloat(document.getElementById('nr-amt').value)||0;
+    const date=document.getElementById('nr-date').value;
+    const note=document.getElementById('nr-note').value;
+    if(!name)return toast('Enter name');
+    if(!amt)return toast('Enter amount');
+    const recv=DB.get('receivables')||[];
+    recv.push({id:uid(),name,amount:amt,date,dueDate:date,note,received:false});
+    DB.set('receivables',recv);closeModal();
+    if(document.getElementById('page-accounts').classList.contains('active')) renderRecv();
+    if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+    toast('Receivable added');
+  });
+}
+function openAddPayModal(){
+  openModal('ADD PAYABLE',`
+    <div class="form-group"><label class="form-label">Supplier Name</label><input class="form-input" id="np-name"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="np-amt" min="0" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="np-date" value="${todayStr()}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="np-note"></div>
+  `,()=>{
+    const name=document.getElementById('np-name').value.trim();
+    const amt=parseFloat(document.getElementById('np-amt').value)||0;
+    const date=document.getElementById('np-date').value;
+    const note=document.getElementById('np-note').value;
+    if(!name)return toast('Enter name');
+    if(!amt)return toast('Enter amount');
+    const pay=DB.get('payables')||[];
+    pay.push({id:uid(),name,amount:amt,date,note,paid:false});
+    DB.set('payables',pay);closeModal();renderPay();
+    if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+    toast('Payable added');
+  });
+}
+function openAdjCapModal(){
+  const acc=DB.get('accounts')||{};
+  openModal('ADJUST CAPITAL BANK BALANCE',`
+    <p style="font-size:12px;margin-bottom:12px;color:var(--muted);">Current balance: <strong>${fmtINR(acc.capitalBank||0)}</strong></p>
+    <div class="form-group"><label class="form-label">New Balance (₹)</label><input class="form-input" type="number" id="adj-cap" value="${acc.capitalBank||0}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="adj-cap-note" value="Opening Balance Adjustment"></div>
+  `,()=>{
+    const newBal=parseFloat(document.getElementById('adj-cap').value)||0;
+    const note=document.getElementById('adj-cap-note').value||'Adjustment';
+    const diff=newBal-(acc.capitalBank||0);
+    acc.capitalBank=newBal;
+    DB.set('accounts',acc);
+    const cl=DB.get('capLedger')||[];
+    cl.push({id:uid(),date:todayStr(),desc:note,in:diff>0?diff:0,out:diff<0?Math.abs(diff):0,bal:newBal});
+    DB.set('capLedger',cl);
+    closeModal();renderCapLedger();toast('Balance updated');
+  });
+}
+function openAdjProfModal(){
+  const acc=DB.get('accounts')||{};
+  openModal('ADJUST PROFIT BANK BALANCE',`
+    <p style="font-size:12px;margin-bottom:12px;color:var(--muted);">Current balance: <strong>${fmtINR(acc.profitBank||0)}</strong></p>
+    <div class="form-group"><label class="form-label">New Balance (₹)</label><input class="form-input" type="number" id="adj-prof" value="${acc.profitBank||0}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="adj-prof-note" value="Opening Balance Adjustment"></div>
+  `,()=>{
+    const newBal=parseFloat(document.getElementById('adj-prof').value)||0;
+    const note=document.getElementById('adj-prof-note').value||'Adjustment';
+    const diff=newBal-(acc.profitBank||0);
+    acc.profitBank=newBal;
+    DB.set('accounts',acc);
+    const pl=DB.get('profLedger')||[];
+    pl.push({id:uid(),date:todayStr(),desc:note,in:diff>0?diff:0,out:diff<0?Math.abs(diff):0,bal:newBal});
+    DB.set('profLedger',pl);
+    closeModal();renderProfLedger();toast('Balance updated');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════════════
+let currentRepType='networth';
+let reportFrom='',reportTo='';
+function setReportPeriod(type,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const now=new Date();
+  const y=now.getFullYear(),m=(now.getMonth()+1).toString().padStart(2,'0');
+  document.getElementById('custom-date-row').style.display='none';
+  if(type==='month'){
+    reportFrom=`${y}-${m}-01`;
+    const lastDay=new Date(y,now.getMonth()+1,0).getDate();
+    reportTo=`${y}-${m}-${lastDay.toString().padStart(2,'0')}`;
+  }else if(type==='quarter'){
+    // Indian FY quarters: Q1=Apr-Jun, Q2=Jul-Sep, Q3=Oct-Dec, Q4=Jan-Mar
+    const m=now.getMonth(); // 0-indexed
+    let qStart,qEnd,qYear=y;
+    if(m>=3&&m<=5){qStart=`${y}-04-01`;qEnd=`${y}-06-30`;}
+    else if(m>=6&&m<=8){qStart=`${y}-07-01`;qEnd=`${y}-09-30`;}
+    else if(m>=9&&m<=11){qStart=`${y}-10-01`;qEnd=`${y}-12-31`;}
+    else{qStart=`${y}-01-01`;qEnd=`${y}-03-31`;}
+    reportFrom=qStart;reportTo=qEnd;
+  }else if(type==='year'){
+    // Indian Financial Year: April 1 to March 31
+    const fyStart=now.getMonth()>=3?y:y-1;
+    reportFrom=`${fyStart}-04-01`;reportTo=`${fyStart+1}-03-31`;
+  }else{
+    document.getElementById('custom-date-row').style.display='flex';
+    document.getElementById('rep-from').value=reportFrom||`${y}-${m}-01`;
+    document.getElementById('rep-to').value=reportTo||`${y}-${m}-30`;
+    return;
+  }
+  renderCurrentReport();
+}
+function switchReport(type,btn){
+  currentRepType=type;
+  document.querySelectorAll('.rep-type-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCurrentReport();
+}
+function renderCurrentReport(){
+  if(document.getElementById('custom-date-row').style.display!=='none'){
+    reportFrom=document.getElementById('rep-from').value;
+    reportTo=document.getElementById('rep-to').value;
+  }
+  if(!reportFrom||!reportTo){
+    const now=new Date();
+    const y=now.getFullYear(),m=(now.getMonth()+1).toString().padStart(2,'0');
+    reportFrom=`${y}-${m}-01`;
+    const lastDay=new Date(y,now.getMonth()+1,0).getDate();
+    reportTo=`${y}-${m}-${lastDay.toString().padStart(2,'0')}`;
+  }
+  const from=fmtDate(reportFrom),to=fmtDate(reportTo);
+  const period=from+' to '+to;
+
+  if(currentRepType==='networth') renderNetWorthReport(period);
+  else if(currentRepType==='pl') renderPLReport(period);
+  else if(currentRepType==='inventory') renderInventoryReport(period);
+  else if(currentRepType==='expense') renderExpenseReport(period);
+  else if(currentRepType==='ledger') renderLedgerReport(period);
+}
+function reportHeader(title,period){
+  const s=DB.get('settings')||{};
+  // Set document title for PDF filename
+  document.title=`${s.businessName||'BPH'} - ${title} - ${period}`;
+  return `<div class="report-header-bar">
+    <div class="report-co-name">${s.businessName||'BISWAJIT POWER HUB'}</div>
+    <div class="report-co-sub">${s.gstin||''} &nbsp;|&nbsp; ${s.address||''} &nbsp;|&nbsp; ${s.phone||''}</div>
+    <div class="report-doc-title">${title}</div>
+    <div class="report-period">Period: ${period}</div>
+  </div>`;
+}
+function renderNetWorthReport(period){
+  const inv=DB.get('inventory')||[];
+  const acc=DB.get('accounts')||{capitalBank:0,profitBank:0};
+  const recv=DB.get('receivables')||[];
+  const pay=DB.get('payables')||[];
+  const settings=DB.get('settings')||{};
+  const invVal=inv.reduce((s,i)=>s+(i.quantity*i.purchaseRate),0);
+  const recvTotal=recv.filter(r=>!r.received).reduce((s,r)=>s+r.amount,0);
+  const payTotal=pay.filter(p=>!p.paid).reduce((s,p)=>s+p.amount,0);
+  const netWorth=invVal+acc.capitalBank+acc.profitBank+recvTotal-payTotal;
+  const totalCapInv=(settings.capitalInvestments||[]).reduce((s,c)=>s+c.amount,0)||1000000;
+  const growth=netWorth-totalCapInv;
+
+  document.getElementById('report-area').innerHTML=reportHeader('NET WORTH STATEMENT',period)+`
+  <div class="report-body">
+    <div class="rep-section-title">ASSETS</div>
+    <div class="rep-row"><span class="rep-row-label">Inventory (Stock at Cost)</span><span class="rep-row-val mono">${fmtINR(invVal)}</span></div>
+    <div class="rep-row"><span class="rep-row-label">Capital Bank Balance</span><span class="rep-row-val mono">${fmtINR(acc.capitalBank)}</span></div>
+    <div class="rep-row"><span class="rep-row-label">Profit Bank Balance</span><span class="rep-row-val mono">${fmtINR(acc.profitBank)}</span></div>
+    <div class="rep-row"><span class="rep-row-label">Receivable (Outstanding)</span><span class="rep-row-val mono">${fmtINR(recvTotal)}</span></div>
+    <div class="rep-total-row"><span class="rep-total-label">Total Assets</span><span class="rep-total-val mono">${fmtINR(netWorth+payTotal)}</span></div>
+    <div class="rep-section-title">LIABILITIES</div>
+    <div class="rep-row"><span class="rep-row-label">Payable (Outstanding)</span><span class="rep-row-val mono">${fmtINR(payTotal)}</span></div>
+    <div class="rep-total-row"><span class="rep-total-label">Total Liabilities</span><span class="rep-total-val mono">${fmtINR(payTotal)}</span></div>
+    <div class="rep-grand-total"><span class="rep-grand-label">Net Worth (Owner's Equity)</span><span class="rep-grand-val mono">${fmtINR(netWorth)}</span></div>
+    <div class="rep-section-title">CAPITAL ANALYSIS</div>
+    <div class="rep-row"><span class="rep-row-label">Starting Capital Invested</span><span class="rep-row-val mono">${fmtINR(totalCapInv)}</span></div>
+    <div class="rep-row"><span class="rep-row-label">Current Net Worth</span><span class="rep-row-val mono">${fmtINR(netWorth)}</span></div>
+    <div class="rep-grand-total" style="background:${growth>=0?'var(--green)':'var(--red)'}"><span class="rep-grand-label">Capital ${growth>=0?'Growth':'Loss'}</span><span class="rep-grand-val mono">${growth>=0?'+':''}${fmtINR(growth)}</span></div>
+    <div style="font-size:9px;color:var(--muted);margin-top:16px;padding-top:10px;border-top:1px solid var(--border-soft);text-align:right;font-family:var(--font-mono);">Generated: ${fmtDate(todayStr())} | Biswajit Power Hub | GSTIN: ${(DB.get('settings')||{}).gstin||'19AKFPH1283D1ZE'}</div>
+  </div>`;
+}
+function renderPLReport(period){
+  const acc=DB.get('accounts')||{capitalBank:0,profitBank:0,grossProfitEarned:0};
+  const fixedExp=DB.get('fixedExp')||[];
+  const bizExp=DB.get('bizExp')||[];
+  const fixedTotal=fixedExp.filter(e=>e.active).reduce((s,e)=>s+e.amount,0);
+  const bizInPeriod=bizExp.filter(e=>e.date>=reportFrom&&e.date<=reportTo);
+  const bizTotal=bizInPeriod.reduce((s,e)=>s+e.amount,0);
+  const totalExp=fixedTotal+bizTotal;
+  const grossProfit=acc.grossProfitEarned||0;
+  const netProfit=acc.profitBank;
+
+  // Get sales in period from salesLog
+  const salesLog=DB.get('salesLog')||[];
+  const salesInPeriod=salesLog.filter(s=>s.date>=reportFrom&&s.date<=reportTo);
+  const periodRevenue=salesInPeriod.reduce((s,x)=>s+x.totalSale,0);
+  const periodCOGS=salesInPeriod.reduce((s,x)=>s+x.cost,0);
+  const periodGrossProfit=salesInPeriod.reduce((s,x)=>s+x.profit,0);
+
+  // Group biz expenses by category
+  const catTotals={};
+  bizInPeriod.forEach(e=>{catTotals[e.category]=(catTotals[e.category]||0)+e.amount;});
+
+  document.getElementById('report-area').innerHTML=reportHeader('PROFIT & LOSS STATEMENT',period)+`
+  <div class="report-body">
+    <div class="rep-section-title">INCOME</div>
+    <div class="rep-row"><span class="rep-row-label">Total Sales Revenue</span><span class="rep-row-val mono">${fmtINR(periodRevenue||grossProfit)}</span></div>
+    ${periodRevenue?`<div class="rep-row indent"><span class="rep-row-label">Cost of Goods Sold</span><span class="rep-row-val mono" style="color:var(--red);">−${fmtINR(periodCOGS)}</span></div>`:''}
+    <div class="rep-total-row"><span class="rep-total-label">Gross Profit</span><span class="rep-total-val mono">${fmtINR(periodRevenue?periodGrossProfit:grossProfit)}</span></div>
+    <div class="rep-section-title">EXPENSES</div>
+    <div class="rep-row"><span class="rep-row-label">Fixed Monthly Expenses</span><span class="rep-row-val mono">${fmtINR(fixedTotal)}</span></div>
+    ${fixedExp.filter(e=>e.active).map(e=>`<div class="rep-row indent"><span class="rep-row-label">${e.name}</span><span class="rep-row-val mono">${fmtINR(e.amount)}</span></div>`).join('')}
+    <div class="rep-row"><span class="rep-row-label">Business Expenses (Period)</span><span class="rep-row-val mono">${fmtINR(bizTotal)}</span></div>
+    ${Object.entries(catTotals).map(([c,v])=>`<div class="rep-row indent"><span class="rep-row-label">${c}</span><span class="rep-row-val mono">${fmtINR(v)}</span></div>`).join('')}
+    <div class="rep-total-row"><span class="rep-total-label">Total Expenses</span><span class="rep-total-val mono">${fmtINR(totalExp)}</span></div>
+    <div class="rep-grand-total" style="background:${netProfit>=0?'var(--green)':'var(--red)'}"><span class="rep-grand-label">Net Profit / (Loss)</span><span class="rep-grand-val mono">${fmtINR(netProfit)}</span></div>
+    <div style="font-size:9px;color:var(--muted);margin-top:12px;padding-top:8px;border-top:1px solid var(--border-soft);">Note: Net Profit = Current Profit Bank Balance after all expense deductions. Capital account is ring-fenced and protected.</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:right;">Generated: ${fmtDate(todayStr())}</div>
+  </div>`;
+}
+function renderInventoryReport(period){
+  const inv=DB.get('inventory')||[];
+  const cats=['E-Rickshaw','Battery','Spare Parts','Other'];
+  let totalVal=0;
+  let rows='';
+  cats.forEach(cat=>{
+    const items=inv.filter(i=>i.category===cat||(cat==='Other'&&!['E-Rickshaw','Battery','Spare Parts'].includes(i.category)));
+    if(items.length===0)return;
+    rows+=`<tr class="cat-row"><td colspan="4">${cat}</td></tr>`;
+    items.forEach(i=>{
+      const val=i.quantity*i.purchaseRate;
+      totalVal+=val;
+      rows+=`<tr><td>${i.name}</td><td style="text-align:center;">${i.quantity}</td><td class="mono" style="text-align:right;">${fmtINR(i.purchaseRate)}</td><td class="mono" style="text-align:right;">${fmtINR(val)}</td></tr>`;
+    });
+  });
+
+  document.getElementById('report-area').innerHTML=reportHeader('INVENTORY / STOCK REPORT',period)+`
+  <div class="report-body">
+    <table class="inv-table">
+      <thead><tr><th>Item Name</th><th style="text-align:center;width:50px;">Qty</th><th style="text-align:right;width:100px;">Rate</th><th style="text-align:right;width:100px;">Value</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="rep-grand-total" style="margin-top:0;"><span class="rep-grand-label">Total Inventory Value</span><span class="rep-grand-val mono">${fmtINR(totalVal)}</span></div>
+    <div style="font-size:9px;color:var(--muted);margin-top:16px;padding-top:10px;border-top:1px solid var(--border-soft);text-align:right;font-family:var(--font-mono);">Generated: ${fmtDate(todayStr())} | Biswajit Power Hub | GSTIN: ${(DB.get('settings')||{}).gstin||'19AKFPH1283D1ZE'}</div>
+  </div>`;
+}
+function renderExpenseReport(period){
+  const fixedExp=DB.get('fixedExp')||[];
+  const bizExp=DB.get('bizExp')||[];
+  const bizInPeriod=bizExp.filter(e=>e.date>=reportFrom&&e.date<=reportTo);
+  bizInPeriod.sort((a,b)=>a.date.localeCompare(b.date));
+  const fixedTotal=fixedExp.filter(e=>e.active).reduce((s,e)=>s+e.amount,0);
+  const bizTotal=bizInPeriod.reduce((s,e)=>s+e.amount,0);
+  const catTotals={};
+  bizInPeriod.forEach(e=>{catTotals[e.category]=(catTotals[e.category]||0)+e.amount;});
+
+  document.getElementById('report-area').innerHTML=reportHeader('EXPENSE REPORT',period)+`
+  <div class="report-body">
+    <div class="rep-section-title">FIXED MONTHLY EXPENSES</div>
+    ${fixedExp.map(e=>`<div class="rep-row${!e.active?' style="opacity:0.5;"':''}"><span class="rep-row-label">${e.name}${!e.active?' (Paused)':''}</span><span class="rep-row-val mono">${fmtINR(e.amount)}</span></div>`).join('')}
+    <div class="rep-total-row"><span class="rep-total-label">Total Fixed</span><span class="rep-total-val mono">${fmtINR(fixedTotal)}</span></div>
+    <div class="rep-section-title">BUSINESS EXPENSES (PERIOD)</div>
+    ${Object.entries(catTotals).map(([c,v])=>`<div class="rep-row"><span class="rep-row-label">${c}</span><span class="rep-row-val mono">${fmtINR(v)}</span></div>`).join('')}
+    <div style="width:100%;margin-top:12px;">
+      <table class="inv-table" style="table-layout:fixed;">
+        <thead><tr><th style="width:80px;">Date</th><th style="width:100px;">Category</th><th>Note</th><th style="text-align:right;width:90px;">Amount</th></tr></thead>
+        <tbody>${bizInPeriod.map(e=>`<tr><td class="mono">${fmtDate(e.date)}</td><td>${e.category}</td><td>${e.note||'—'}</td><td class="mono" style="text-align:right;">${fmtINR(e.amount)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="rep-total-row"><span class="rep-total-label">Total Business Expenses</span><span class="rep-total-val mono">${fmtINR(bizTotal)}</span></div>
+    <div class="rep-grand-total"><span class="rep-grand-label">Grand Total Expenses</span><span class="rep-grand-val mono">${fmtINR(fixedTotal+bizTotal)}</span></div>
+    <div style="font-size:9px;color:var(--muted);margin-top:16px;padding-top:10px;border-top:1px solid var(--border-soft);text-align:right;font-family:var(--font-mono);">Generated: ${fmtDate(todayStr())} | Biswajit Power Hub | GSTIN: ${(DB.get('settings')||{}).gstin||'19AKFPH1283D1ZE'}</div>
+  </div>`;
+}
+function renderLedgerReport(period){
+  const capLedger=DB.get('capLedger')||[];
+  const profLedger=DB.get('profLedger')||[];
+  const capInPeriod=capLedger.filter(r=>r.date>=reportFrom&&r.date<=reportTo);
+  const profInPeriod=profLedger.filter(r=>r.date>=reportFrom&&r.date<=reportTo);
+
+  document.getElementById('report-area').innerHTML=reportHeader('TRANSACTION LEDGER',period)+`
+  <div class="report-body">
+    <div class="rep-section-title">CAPITAL ACCOUNT LEDGER</div>
+    <div style="width:100%;">
+      <table class="inv-table" style="table-layout:fixed;">
+        <thead><tr><th style="width:80px;">Date</th><th>Description</th><th style="text-align:right;">In (₹)</th><th style="text-align:right;">Out (₹)</th><th style="text-align:right;">Balance</th></tr></thead>
+        <tbody>${capInPeriod.length?capInPeriod.map(r=>`<tr>
+          <td class="mono">${fmtDate(r.date)}</td><td>${r.desc}</td>
+          <td class="mono" style="text-align:right;color:var(--green)">${r.in?fmtINR(r.in):''}</td>
+          <td class="mono" style="text-align:right;color:var(--red)">${r.out?fmtINR(r.out):''}</td>
+          <td class="mono" style="text-align:right;font-weight:600;">${fmtINR(r.bal)}</td>
+        </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">No transactions in period</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="rep-section-title" style="margin-top:20px;">PROFIT ACCOUNT LEDGER</div>
+    <div style="width:100%;">
+      <table class="inv-table" style="table-layout:fixed;">
+        <thead><tr><th style="width:80px;">Date</th><th>Description</th><th style="text-align:right;">In (₹)</th><th style="text-align:right;">Out (₹)</th><th style="text-align:right;">Balance</th></tr></thead>
+        <tbody>${profInPeriod.length?profInPeriod.map(r=>`<tr>
+          <td class="mono">${fmtDate(r.date)}</td><td>${r.desc}</td>
+          <td class="mono" style="text-align:right;color:var(--green)">${r.in?fmtINR(r.in):''}</td>
+          <td class="mono" style="text-align:right;color:var(--red)">${r.out?fmtINR(r.out):''}</td>
+          <td class="mono" style="text-align:right;font-weight:600;">${fmtINR(r.bal)}</td>
+        </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">No transactions in period</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div style="font-size:9px;color:var(--muted);margin-top:16px;padding-top:10px;border-top:1px solid var(--border-soft);text-align:right;font-family:var(--font-mono);">Generated: ${fmtDate(todayStr())} | Biswajit Power Hub | GSTIN: ${(DB.get('settings')||{}).gstin||'19AKFPH1283D1ZE'}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+function renderSettings(){
+  const s=DB.get('settings')||{};
+  document.getElementById('s-name').textContent=s.businessName||'—';
+  document.getElementById('s-gstin').textContent=s.gstin||'—';
+  document.getElementById('s-addr').textContent=s.address||'—';
+  document.getElementById('s-phone').textContent=s.phone||'—';
+
+  const capInvEl=document.getElementById('cap-investments-list');
+  const invs=s.capitalInvestments||[];
+  const total=invs.reduce((sum,c)=>sum+c.amount,0);
+  capInvEl.innerHTML=invs.map((c,i)=>`
+    <div class="cap-investment-item">
+      <div>
+        <div style="font-weight:600;">${fmtINR(c.amount)}</div>
+        <div style="font-size:10px;color:var(--muted);">${fmtDate(c.date)} · ${c.note||'Investment'}</div>
+      </div>
+      <button class="btn-danger" style="font-size:9px;padding:3px 8px;" onclick="deleteCapInv(${i})">DEL</button>
+    </div>`).join('')+
+    `<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);margin-top:4px;">
+      <span style="font-weight:700;font-size:12px;">Total Capital Invested</span>
+      <span style="font-family:var(--font-mono);font-size:14px;font-weight:700;">${fmtINR(total)}</span>
+    </div>`;
+}
+function deleteCapInv(i){
+  if(!confirm('Delete this investment record?'))return;
+  const s=DB.get('settings')||{};
+  if(!s.capitalInvestments)return;
+  s.capitalInvestments.splice(i,1);
+  DB.set('settings',s);renderSettings();
+}
+function openEditBizModal(){
+  const s=DB.get('settings')||{};
+  openModal('EDIT BUSINESS INFO',`
+    <div class="form-group"><label class="form-label">Business Name</label><input class="form-input" id="biz-name" value="${s.businessName||''}"></div>
+    <div class="form-group"><label class="form-label">GSTIN</label><input class="form-input" id="biz-gstin" value="${s.gstin||''}"></div>
+    <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="biz-addr" value="${s.address||''}"></div>
+    <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="biz-phone" value="${s.phone||''}"></div>
+    <div class="form-group"><label class="form-label">Website</label><input class="form-input" id="biz-web" value="${s.website||''}"></div>
+  `,()=>{
+    s.businessName=document.getElementById('biz-name').value;
+    s.gstin=document.getElementById('biz-gstin').value;
+    s.address=document.getElementById('biz-addr').value;
+    s.phone=document.getElementById('biz-phone').value;
+    s.website=document.getElementById('biz-web').value;
+    DB.set('settings',s);closeModal();renderSettings();toast('Updated');
+  });
+}
+function openAddCapInvModal(){
+  openModal('ADD CAPITAL INVESTMENT',`
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input class="form-input" type="number" id="ci-amt"></div>
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="ci-date" value="${todayStr()}"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="ci-note" value="Additional Investment"></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px;">This amount will also be added to Capital Bank.</p>
+  `,()=>{
+    const amt=parseFloat(document.getElementById('ci-amt').value)||0;
+    const date=document.getElementById('ci-date').value;
+    const note=document.getElementById('ci-note').value;
+    if(!amt)return toast('Enter amount');
+    const s=DB.get('settings')||{};
+    if(!s.capitalInvestments) s.capitalInvestments=[];
+    s.capitalInvestments.push({id:uid(),date,amount:amt,note});
+    DB.set('settings',s);
+    const acc=DB.get('accounts')||{};
+    acc.capitalBank=(acc.capitalBank||0)+amt;
+    DB.set('accounts',acc);
+    const cl=DB.get('capLedger')||[];
+    cl.push({id:uid(),date,desc:`Capital Investment: ${note}`,in:amt,out:0,bal:acc.capitalBank});
+    DB.set('capLedger',cl);
+    closeModal();renderSettings();toast(`${fmtINR(amt)} added to Capital`);
+  });
+}
+function backupData(){
+  const data={};
+  ['settings','accounts','inventory','capLedger','profLedger','fixedExp','bizExp','expCats','receivables','payables','lastMonthDeduct','salesLog'].forEach(k=>{
+    data[k]=DB.get(k);
+  });
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`BPH_Backup_${todayStr()}.json`;
+  a.click();toast('Backup downloaded!');
+}
+function restoreData(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  if(!confirm('This will replace ALL current data. Continue?'))return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      Object.entries(data).forEach(([k,v])=>DB.set(k,v));
+      toast('Data restored!');
+      renderDashboard();
+    }catch(err){toast('Invalid backup file');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+function resetAllData(){
+  if(!confirm('RESET ALL DATA? This cannot be undone!'))return;
+  if(!confirm('Are you absolutely sure? All your data will be deleted.'))return;
+  ['settings','accounts','inventory','capLedger','profLedger','fixedExp','bizExp','expCats','receivables','payables','lastMonthDeduct','salesLog'].forEach(k=>{
+    localStorage.removeItem('bph_'+k);
+  });
+  initData();showPage('dashboard');toast('All data reset');
+}
+
+// ═══════════════════════════════════════════════
+// MODAL SYSTEM
+// ═══════════════════════════════════════════════
+let modalConfirmFn=null;
+function openModal(title,bodyHTML,onConfirm){
+  modalConfirmFn=onConfirm;
+  document.getElementById('modal-box').innerHTML=`
+    <div class="modal-title">${title}</div>
+    ${bodyHTML}
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn-secondary" style="flex:1;" onclick="closeModal()">CANCEL</button>
+      <button class="btn-primary" style="flex:2;" onclick="modalConfirm()">CONFIRM</button>
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('active');
+  // Focus first input
+  setTimeout(()=>{const f=document.querySelector('#modal-box input,#modal-box select');if(f)f.focus();},100);
+}
+function modalConfirm(){if(modalConfirmFn)modalConfirmFn();}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('active');
+  modalConfirmFn=null;
+}
+function closeModalOnBg(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+// ═══════════════════════════════════════════════
+// PRINT
+// ═══════════════════════════════════════════════
+function printReport(){
+  // Must be on reports page
+  if(!document.getElementById('page-reports').classList.contains('active')){
+    showPage('reports');
+  }
+  // Render report with latest data
+  renderCurrentReport();
+  // Wait for DOM, fonts, and images to settle, then print
+  setTimeout(()=>{
+    // Temporarily remove desktop centering transform that breaks print layout
+    const app=document.getElementById('app');
+    const topbar=document.getElementById('topbar');
+    const nav=document.getElementById('bottomnav');
+    const oldAppStyle=app.getAttribute('style')||'';
+    const oldTopStyle=topbar.getAttribute('style')||'';
+    const oldNavStyle=nav.getAttribute('style')||'';
+    // Remove transform for print
+    app.style.transform='none';
+    app.style.left='0';
+    app.style.right='0';
+    topbar.style.transform='none';
+    nav.style.transform='none';
+    window.print();
+    // Restore after print dialog closes
+    setTimeout(()=>{
+      app.setAttribute('style',oldAppStyle);
+      topbar.setAttribute('style',oldTopStyle);
+      nav.setAttribute('style',oldNavStyle);
+    },500);
+  },300);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function updateDate(){
+  const now=new Date();
+  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('topbar-date').textContent=`${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+initData();
+updateDate();
+setInterval(updateDate,60000);
+renderDashboard();
+
+// Register service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
